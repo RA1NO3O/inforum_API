@@ -1,10 +1,10 @@
 //server.js
+const port=7246;    //端口号
 const express = require('express');
 const app = express();
-const bodyParser = require('body-parser');
 require('./app/routes')(app,{});
 
-app.listen(8080,()=> {
+app.listen(port,()=> {
     console.clear();
-    console.log('app listening on http://localhost:8080');
+    console.log('app listening on http://localhost:'+port);
 });
