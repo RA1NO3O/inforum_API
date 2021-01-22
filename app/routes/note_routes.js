@@ -32,7 +32,7 @@ module.exports = function (app, db) {
             new sql.Request()
                 .input('username',sql.VarChar, req.query.username) //多字段查询
                 .query(
-                    'SELECT id from dbo.tbLogin_userToken\
+                    'SELECT id, username from dbo.tbLogin_userToken\
                      WHERE (username = @username OR email = @username) OR (phone = @username)'
                 ).then(function(recordset){
                     console.dir(recordset);
