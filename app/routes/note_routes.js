@@ -27,6 +27,23 @@ module.exports = function (app, db) {
     })
 
     //登录
+    app.get('/api/searchUser',function(req,res){
+        sql.connect(config).then(function(){
+            new sql.Request()
+                .input('username',sql.VarChar, req.query.username) //多字段查询
+                .query(
+                    'SELECT id from dbo.tbLogin_userToken\
+                     WHERE (username = @username OR email = @username) OR (phone = @username)'
+                ).then(function(recordset){
+                    console.dir(recordset);
+                    res.json(recordset);
+                    //TODO:记录日志
+                });
+        }).catch(function (err){
+            console.log(err);
+            res.send('error');
+        });
+    });
     app.get('/api/login',function(req,res){
         sql.connect(config).then(function(){
             new sql.Request()
