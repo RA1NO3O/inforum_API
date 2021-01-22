@@ -26,6 +26,49 @@ module.exports = function (app, db) {
         res.send('test passed.');
     })
 
+    //登录
+    app.get('/api/login',function(req,res){
+        sql.connect(config).then(function(){
+            new sql.Request()
+                .input('username',sql.VarChar, req.query.username) //多字段查询
+                .input('password', sql.VarChar, req.query.password)
+                .query(
+                    'SELECT id from dbo.tbLogin_userToken\
+                     WHERE ((username = @username OR email = @username) OR (phone = @username))\
+                     AND password = @password'
+                ).then(function(recordset){
+                    console.dir(recordset);
+                    res.json(recordset);
+                    //TODO:记录日志
+                });
+        }).catch(function (err){
+            console.log(err);
+            res.send(err);
+        });
+    });
+
+    //注册
+    app.post('api/createAccount/', function (req, res) {
+        sql.connect(config).then(function () {
+            new sql.Request()
+                .input('username', sql.VarChar, req.body.username)
+                .input('password', sql.VarChar, req.body.password)
+                .input('email', sql.VarChar, req.body.email)
+                .input('phone', sql.VarChar, req.body.phone)
+                .query(
+                    'insert into dbo.tbLogin_userToken \
+                 (username,password,email,phone)\
+                 VALUES (@username, @password, @email, @phone);'
+                ).then(function (recordset) {
+                    console.log(req.body);
+                    res.send('success.');
+                });
+        }).catch(function (err) {
+            console.log(err);
+            res.send('error.');
+        });
+    })
+
     //刷新首页帖子流
     app.get('/api/getPosts', function (req, res) {
         sql.connect(config).then(function () {
@@ -107,24 +150,4 @@ module.exports = function (app, db) {
         });
     });
 
-    app.post('api/createAccount/', function (req, res) {
-        sql.connect(config).then(function () {
-            new sql.Request()
-                .input('username', sql.VarChar, req.body.username)
-                .input('password', sql.VarChar, req.body.password)
-                .input('email', sql.VarChar, req.body.email)
-                .input('phone', sql.VarChar, req.body.phone)
-                .query(
-                    'insert into dbo.tbLogin_userToken \
-                 (username,password,email,phone)\
-                 VALUES (@username, @password, @email, @phone);'
-                ).then(function (recordset) {
-                    console.log(req.body);
-                    res.send('success.');
-                });
-        }).catch(function (err) {
-            console.log(err);
-            res.send('error.');
-        });
-    })
 };
