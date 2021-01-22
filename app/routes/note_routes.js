@@ -51,7 +51,7 @@ module.exports = function (app, db) {
                 .input('password', sql.VarChar, req.query.password)
                 .query(
                     'SELECT id from dbo.tbLogin_userToken\
-                     WHERE ((username = @username OR email = @username) OR (phone = @username))\
+                     WHERE username = @username OR email = @username OR phone = @username\
                      AND password = @password'
                 ).then(function(recordset){
                     console.dir(recordset);
