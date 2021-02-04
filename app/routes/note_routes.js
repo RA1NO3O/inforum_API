@@ -94,6 +94,7 @@ module.exports = function (app, db) {
                 ).then(function (recordset) {
                     console.dir(recordset);
                     res.json(recordset);
+                    console.log(res);
                 });
         }).catch(function (err) {
             console.log(err);
