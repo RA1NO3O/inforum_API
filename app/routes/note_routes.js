@@ -27,38 +27,38 @@ module.exports = function (app, db) {
     })
 
     //登录
-    app.get('/api/searchUser',function(req,res){
-        sql.connect(config).then(function(){
+    app.get('/api/searchUser', function (req, res) {
+        sql.connect(config).then(function () {
             new sql.Request()
-                .input('username',sql.VarChar, req.query.username) //多字段查询
+                .input('username', sql.VarChar, req.query.username) //多字段查询
                 .query(
                     'SELECT username from dbo.tbLogin_userToken\
                      WHERE (username = @username OR email = @username) OR (phone = @username)'
-                ).then(function(recordset){
+                ).then(function (recordset) {
                     console.dir(recordset);
                     res.json(recordset);
                     //TODO:记录日志
                 });
-        }).catch(function (err){
+        }).catch(function (err) {
             console.log(err);
             res.send('error');
         });
     });
-    app.get('/api/login',function(req,res){
-        sql.connect(config).then(function(){
+    app.get('/api/login', function (req, res) {
+        sql.connect(config).then(function () {
             new sql.Request()
-                .input('username',sql.VarChar, req.query.username) //多字段查询
+                .input('username', sql.VarChar, req.query.username) //多字段查询
                 .input('password', sql.VarChar, req.query.password)
                 .query(
                     'SELECT id from dbo.tbLogin_userToken\
                      WHERE (username = @username OR email = @username OR phone = @username)\
                      AND password = @password'
-                ).then(function(recordset){
+                ).then(function (recordset) {
                     console.dir(recordset);
                     res.json(recordset);
                     //TODO:记录日志
                 });
-        }).catch(function (err){
+        }).catch(function (err) {
             console.log(err);
             res.send(err);
         });
@@ -90,7 +90,7 @@ module.exports = function (app, db) {
     app.get('/api/getPosts', function (req, res) {
         sql.connect(config).then(function () {
             new sql.Request()
-                .query('SELECT * FROM getPost').then(function (recordset) {
+                .query('SELECT * FROM [Inforum_Data_Center].[dbo].[getPosts]').then(function (recordset) {
                     console.dir(recordset);
                     res.json(recordset);
                 });
@@ -106,18 +106,8 @@ module.exports = function (app, db) {
             new sql.Request()
                 .input('postID', sql.Int, req.params.id) //SQL注入
                 .query(
-                    'SELECT   TOP (100) PERCENT dbo.tbInfo_user.avatarURL, dbo.tbInfo_user.nickname, dbo.tbLogin_userToken.username,\
-                    tbPost_1.title, tbPost_1.body, tbPost_1.imageURL, tbPost_1.tags, tbPost_1.lastEditTime,\
-                        (SELECT   COUNT(*) AS commentCount\
-                         FROM      dbo.tbPost\
-                         WHERE   (target_comment_postID = tbPost_1.postID)) AS commentCount\
-                    FROM      dbo.tbPost AS tbPost_1 INNER JOIN\
-                    dbo.tbInfo_user ON tbPost_1.editorID = dbo.tbInfo_user.id INNER JOIN\
-                    dbo.tbLogin_userToken ON dbo.tbInfo_user.id = dbo.tbLogin_userToken.id INNER JOIN\
-                    dbo.postStateList AS postStateList_2 ON tbPost_1.postID = postStateList_2.post_ID AND \
-                    dbo.tbInfo_user.id = postStateList_2.user_ID\
-                    WHERE   (tbPost_1.postID = @postID)\
-                    ORDER BY tbPost_1.lastEditTime DESC'
+                    'SELECT * FROM [Inforum_Data_Center].[dbo].[getPostDetail]\
+                    WHERE getPostDetail.postID = @postID'
                 ).then(function (recordset) {
                     console.dir(recordset);
                     res.json(recordset);
@@ -157,7 +147,10 @@ module.exports = function (app, db) {
         sql.connect(config).then(function () {
             new sql.Request()
                 .input('userID', sql.Int, req.params.id)//SQL注入
-                .query('SELECT * FROM getProfile where id = @userID').then(function (recordset) {
+                .query(
+                    'SELECT * FROM [Inforum_Data_Center].[dbo].[getProfile]\
+                     WHERE (getProfile.id = @userID)'
+                ).then(function (recordset) {
                     console.dir(recordset); //在终端输出
                     res.json(recordset);
                 });
