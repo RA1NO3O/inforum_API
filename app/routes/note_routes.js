@@ -47,7 +47,7 @@ module.exports = function (app, db) {
     app.get('/api/login', function (req, res) {
         sql.connect(config).then(function () {
             new sql.Request()
-                .input('username', sql.VarChar, req.query.username) //多字段查询
+                .input('username', sql.VarChar, req.query.username)
                 .input('password', sql.VarChar, req.query.password)
                 .query(
                     'SELECT id from dbo.tbLogin_userToken\
@@ -86,11 +86,30 @@ module.exports = function (app, db) {
         });
     })
 
-    //刷新首页帖子流
+    //首页帖子流
     app.get('/api/getPosts', function (req, res) {
         sql.connect(config).then(function () {
             new sql.Request()
-                .query('SELECT * FROM [Inforum_Data_Center].[dbo].[getPosts]').then(function (recordset) {
+                .query('SELECT * FROM [Inforum_Data_Center].[dbo].[getPosts]'
+                ).then(function (recordset) {
+                    console.dir(recordset);
+                    res.json(recordset);
+                });
+        }).catch(function (err) {
+            console.log(err);
+            res.send(err);
+        });
+    });
+
+    //获取帖子就当前用户的状态
+    app.get('/api/getPostState', function (req, res) {
+        sql.connect(config).then(function () {
+            new sql.Request()
+                .input('userID', sql.Int, req.query.userID)
+                .input('postID', sql.Int, req.query.postID)
+                .query('SELECT * FROM [Inforum_Data_Center].[dbo].[postStateList]\
+                    WHERE user_ID = @userID AND post_ID = @postID'
+                ).then(function (recordset) {
                     console.dir(recordset);
                     res.json(recordset);
                 });
@@ -122,15 +141,11 @@ module.exports = function (app, db) {
     app.get('/api/getComment/:id', function (req, res) {
         sql.connect(config).then(function () {
             new sql.Request()
-                .input('postID', sql.Int, req.params.id) //SQL注入
+                .input('postID', sql.Int, req.params.id)
                 .query(
-                    'SELECT   TOP (100) PERCENT dbo.tbPost.body, dbo.tbPost.imageURL, dbo.tbPost.lastEditTime, \
-                     dbo.tbLogin_userToken.username, dbo.tbInfo_user.avatarURL, dbo.tbInfo_user.nickname\
-                     FROM      dbo.tbPost INNER JOIN\
-                     dbo.tbInfo_user ON dbo.tbPost.editorID = dbo.tbInfo_user.id INNER JOIN\
-                     dbo.tbLogin_userToken ON dbo.tbInfo_user.id = dbo.tbLogin_userToken.id\
-                     WHERE   (tbPost.target_comment_postID = @postID)\
-                     ORDER BY dbo.tbPost.lastEditTime DESC'
+                    'SELECT TOP (1000) [body],[imageURL],[lastEditTime],[username],[avatarURL],[nickname]\
+                     FROM [Inforum_Data_Center].[dbo].[getPostComment]\
+                     WHERE  getPostComment.target_comment_postID = @postID'
                 ).then(function (recordset) {
                     console.dir(recordset);
                     res.json(recordset);
@@ -146,7 +161,7 @@ module.exports = function (app, db) {
     app.get('/api/getProfile/:id', function (req, res) {
         sql.connect(config).then(function () {
             new sql.Request()
-                .input('userID', sql.Int, req.params.id)//SQL注入
+                .input('userID', sql.Int, req.params.id)
                 .query(
                     'SELECT * FROM [Inforum_Data_Center].[dbo].[getProfile]\
                      WHERE (getProfile.id = @userID)'
