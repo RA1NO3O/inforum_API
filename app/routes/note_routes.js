@@ -144,7 +144,7 @@ module.exports = function (app, db) {
             new sql.Request()
                 .input('postID', sql.Int, req.params.id)
                 .query(
-                    'SELECT TOP (1000) [body],[imageURL],[lastEditTime],[username],[avatarURL],[nickname]\
+                    'SELECT TOP (1000) [postID],[body],[imageURL],[lastEditTime],[username],[avatarURL],[nickname]\
                      FROM [Inforum_Data_Center].[dbo].[getPostComment]\
                      WHERE  getPostComment.target_comment_postID = @postID'
                 ).then(function (recordset) {
