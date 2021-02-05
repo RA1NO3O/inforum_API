@@ -90,7 +90,9 @@ module.exports = function (app, db) {
     app.get('/api/getPosts', function (req, res) {
         sql.connect(config).then(function () {
             new sql.Request()
-                .query('SELECT * FROM [Inforum_Data_Center].[dbo].[getPosts]'
+                .query('SELECT * FROM [Inforum_Data_Center].[dbo].[getPosts] LEFT OUTER JOIN postStateList\
+                        ON [Inforum_Data_Center].[dbo].[getPosts].postID=postStateList.post_ID\
+                        WHERE postStateList.user_ID=10000001 OR postStateList.user_ID IS NULL;'
                 ).then(function (recordset) {
                     console.dir(recordset);
                     res.json(recordset);
@@ -102,23 +104,6 @@ module.exports = function (app, db) {
         });
     });
 
-    //获取帖子就当前用户的状态
-    app.get('/api/getPostState', function (req, res) {
-        sql.connect(config).then(function () {
-            new sql.Request()
-                .input('userID', sql.Int, req.query.userID)
-                .input('postID', sql.Int, req.query.postID)
-                .query('SELECT * FROM [Inforum_Data_Center].[dbo].[postStateList]\
-                    WHERE user_ID = @userID AND post_ID = @postID'
-                ).then(function (recordset) {
-                    console.dir(recordset);
-                    res.json(recordset);
-                });
-        }).catch(function (err) {
-            console.log(err);
-            res.send(err);
-        });
-    });
 
     //请求传入id => 获取帖子详情
     app.get('/api/getPostDetail/:id', function (req, res) {
