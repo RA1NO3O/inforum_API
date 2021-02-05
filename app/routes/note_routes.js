@@ -91,9 +91,12 @@ module.exports = function (app, db) {
         sql.connect(config).then(function () {
             new sql.Request()
                 .input('userID',sql.Int,req.query.userID)
-                .query('SELECT * FROM [Inforum_Data_Center].[dbo].[getPosts] LEFT OUTER JOIN postStateList\
-                        ON [Inforum_Data_Center].[dbo].[getPosts].postID=postStateList.post_ID\
-                        WHERE postStateList.user_ID=@userID OR postStateList.user_ID IS NULL;'
+                .query('SELECT a.postID, a.title, a.body_S, a.imageURL, a.lastEditTime, a.nickname, a.tags, \
+                        a.avatarURL, a.likeCount,a.dislikeCount, a.commentCount, a.collectCount, a.editorID,\
+                        b.user_ID, b.isCollected, b.like_State, b.collectTime\
+                        FROM [Inforum_Data_Center].[dbo].[getPosts] AS a LEFT OUTER JOIN postStateList AS b \
+                        ON a.postID=b.post_ID\
+                        WHERE b.user_ID=10000001 OR b.user_ID IS NULL;'
                 ).then(function (recordset) {
                     console.dir(recordset);
                     res.json(recordset);
