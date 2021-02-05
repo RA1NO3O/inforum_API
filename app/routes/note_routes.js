@@ -65,7 +65,8 @@ module.exports = function (app, db) {
     });
 
     //注册
-    app.post('api/createAccount/', function (req, res) {
+    app.post('/api/createAccount/', function (req, res) {
+        console.log(req);
         sql.connect(config).then(function () {
             new sql.Request()
                 .input('username', sql.VarChar, req.body.username)
@@ -74,8 +75,8 @@ module.exports = function (app, db) {
                 .input('phone', sql.VarChar, req.body.phone)
                 .query(
                     'insert into dbo.tbLogin_userToken \
-                 (username,password,email,phone)\
-                 VALUES (@username, @password, @email, @phone);'
+                     (username,password,email,phone)\
+                     VALUES (@username, @password, @email, @phone);'
                 ).then(function (recordset) {
                     console.log(req.body);
                     res.send('success.');
