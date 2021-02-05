@@ -90,9 +90,10 @@ module.exports = function (app, db) {
     app.get('/api/getPosts', function (req, res) {
         sql.connect(config).then(function () {
             new sql.Request()
+                .input('userID',sql.Int,req.query.userID)
                 .query('SELECT * FROM [Inforum_Data_Center].[dbo].[getPosts] LEFT OUTER JOIN postStateList\
                         ON [Inforum_Data_Center].[dbo].[getPosts].postID=postStateList.post_ID\
-                        WHERE postStateList.user_ID=10000001 OR postStateList.user_ID IS NULL;'
+                        WHERE postStateList.user_ID=@userID OR postStateList.user_ID IS NULL;'
                 ).then(function (recordset) {
                     console.dir(recordset);
                     res.json(recordset);
