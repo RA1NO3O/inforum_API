@@ -1,5 +1,6 @@
 const config = require('../../config/db')
 const sql = require('mssql');
+const { password } = require('../../config/db');
 
 module.exports = function (app, db) {
     var bodyParser = require('body-parser');
@@ -73,10 +74,19 @@ module.exports = function (app, db) {
                 .input('password', sql.VarChar, req.body.password)
                 .input('email', sql.VarChar, req.body.email)
                 .input('phone', sql.VarChar, req.body.phone)
+                .input('nickname', sql.VarChar, req.body.nickname)
+                .input('birthday', sql.Date, req.body.birthday)
+                .input('bio', sql.VarChar, req.body.bio)
+                .input('gender', sql.VarChar, req.body.gender)
+                .input('location', sql.VarChar, req.body.location)
                 .query(
-                    'insert into dbo.tbLogin_userToken \
-                     (username,password,email,phone)\
-                     VALUES (@username, @password, @email, @phone);'
+                    'insert into dbo.tbLogin_userToken(username,password,email,phone)\
+                        VALUES (@username, @password, @email, @phone);\
+                     insert into dbo.tbInfo_user(id,nickname,birthday,bio,gender,location)\
+                        VALUES(\
+                            (SELECT id FROM tbLogin_userToken WHERE username= @username),\
+                            @nickname,@birthday,@bio,@gender,@location\
+                        );'
                 ).then(function (recordset) {
                     console.log(req.body);
                     res.send('success.');
@@ -85,13 +95,13 @@ module.exports = function (app, db) {
             console.log(err);
             res.send('error.');
         });
-    })
+    });
 
     //首页帖子流
     app.get('/api/getPosts', function (req, res) {
         sql.connect(config).then(function () {
             new sql.Request()
-                .input('userID',sql.Int,req.query.userID)
+                .input('userID', sql.Int, req.query.userID)
                 .query('SELECT a.postID, a.title, a.body_S, a.imageURL, a.lastEditTime, a.nickname, a.tags, \
                         a.avatarURL, a.likeCount,a.dislikeCount, a.commentCount, a.collectCount, a.editorID,\
                         b.user_ID, b.isCollected, b.like_State, b.collectTime\
@@ -163,6 +173,24 @@ module.exports = function (app, db) {
         }).catch(function (err) {
             console.log(err);
             res.send(err);
+        });
+    });
+
+    //删除账户
+    app.delete('/api/deleteUser/', function (req, res) {
+        console.log(req);
+        sql.connect(config).then(function () {
+            new sql.Request()
+                .input('userID', sql.VarChar, req.body.userID)
+                .query(
+                    'DELETE FROM tbLogin_userToken WHERE id=@userID;'
+                ).then(function (recordset) {
+                    console.log(req.body);
+                    res.send('success.');
+                });
+        }).catch(function (err) {
+            console.log(err);
+            res.send('error.');
         });
     });
 
