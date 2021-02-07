@@ -1,19 +1,32 @@
-const config = require('../../config/db')
+const config = require('../../config/db')   //TODO:请配置好对应的变量.
 const sql = require('mssql');
-const { password } = require('../../config/db');
 
 module.exports = function (app, db) {
+    const OSS = require('ali-oss');
+    const ossProfile = require('../../config/oss')  //TODO:请在此处配置好对应的变量.
     var bodyParser = require('body-parser');
-    var multipart = require('connect-multiparty');
-    var multipartMiddleware = multipart();
-
+    var myDate = new Date();
     app.use(bodyParser.json({ limit: '1mb' }));
     app.use(bodyParser.urlencoded({
         extended: true
     }));
 
-    var myDate = new Date();
+    app.put('api/uploadImage', function (req, res) {
+        let client = new OSS(ossProfile);
+        let fs = require('fs');
+        async function putStream() {
+            try {
+                let stream = fs.createReadStream(req.body);
+                let result = await client.putStream('object-name', stream);
+                console.log(result);
+            } catch (e) {
+                console.log(e);
+            }
+        }
+        putStream();
+    });
 
+    //基础响应
     app.get('/', function (req, res) {
         res.send('Inforum Web API V1.0<br/>' + myDate.toLocaleTimeString());
     });
