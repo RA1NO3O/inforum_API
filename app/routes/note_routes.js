@@ -2,29 +2,12 @@ const config = require('../../config/db')   //TODO:请配置好对应的变量.
 const sql = require('mssql');
 
 module.exports = function (app, db) {
-    const OSS = require('ali-oss');
-    const ossProfile = require('../../config/oss')  //TODO:请在此处配置好对应的变量.
     var bodyParser = require('body-parser');
     var myDate = new Date();
     app.use(bodyParser.json({ limit: '1mb' }));
     app.use(bodyParser.urlencoded({
         extended: true
     }));
-
-    app.put('/api/uploadImage', function (req, res) {
-        let client = new OSS(ossProfile);
-        let fs = require('fs');
-        async function putStream() {
-            try {
-                let stream = fs.createReadStream(req.body);
-                let result = await client.putStream('object-name', stream);
-                console.log(result);
-            } catch (e) {
-                console.log(e);
-            }
-        }
-        putStream();
-    });
 
     //基础响应
     app.get('/', function (req, res) {
