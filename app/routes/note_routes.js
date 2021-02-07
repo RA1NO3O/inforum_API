@@ -11,7 +11,7 @@ module.exports = function (app, db) {
         extended: true
     }));
 
-    app.put('api/uploadImage', function (req, res) {
+    app.put('/api/uploadImage', function (req, res) {
         let client = new OSS(ossProfile);
         let fs = require('fs');
         async function putStream() {
