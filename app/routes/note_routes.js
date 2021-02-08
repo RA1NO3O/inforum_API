@@ -3,7 +3,7 @@ const sql = require('mssql');
 
 module.exports = function (app, db) {
     var bodyParser = require('body-parser');
-    var myDate = new Date();
+    var myDate;
     app.use(bodyParser.json({ limit: '1mb' }));
     app.use(bodyParser.urlencoded({
         extended: true
@@ -11,6 +11,7 @@ module.exports = function (app, db) {
 
     //基础响应
     app.get('/', function (req, res) {
+        myDate = new Date();
         res.send('Inforum Web API V1.0<br/>' + myDate.toLocaleTimeString());
     });
     app.get('/whoRyou', (req, res) => {
