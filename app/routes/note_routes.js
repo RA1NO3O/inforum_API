@@ -71,11 +71,11 @@ module.exports = function (app, db) {
                 .input('password', sql.VarChar, req.body.password)
                 .input('email', sql.VarChar, req.body.email)
                 .input('phone', sql.VarChar, req.body.phone)
-                .input('nickname', sql.VarChar, req.body.nickname)
-                .input('birthday', sql.Date, req.body.birthday)
-                .input('bio', sql.VarChar, req.body.bio)
-                .input('gender', sql.VarChar, req.body.gender)
-                .input('location', sql.VarChar, req.body.location)
+                // .input('nickname', sql.VarChar, req.body.nickname)
+                // .input('birthday', sql.Date, req.body.birthday)
+                // .input('bio', sql.VarChar, req.body.bio)
+                // .input('gender', sql.VarChar, req.body.gender)
+                // .input('location', sql.VarChar, req.body.location)
                 .query(
                     'insert into dbo.tbLogin_userToken(username,password,email,phone)\
                         VALUES (@username, @password, @email, @phone);'
