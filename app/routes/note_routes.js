@@ -78,12 +78,7 @@ module.exports = function (app, db) {
                 .input('location', sql.VarChar, req.body.location)
                 .query(
                     'insert into dbo.tbLogin_userToken(username,password,email,phone)\
-                        VALUES (@username, @password, @email, @phone);\
-                     insert into dbo.tbInfo_user(id,nickname,birthday,bio,gender,location)\
-                        VALUES(\
-                            (SELECT id FROM tbLogin_userToken WHERE username= @username),\
-                            @nickname,@birthday,@bio,@gender,@location\
-                        );'
+                        VALUES (@username, @password, @email, @phone);'
                 ).then(function (recordset) {
                     console.log(req.body);
                     res.send('success.');
