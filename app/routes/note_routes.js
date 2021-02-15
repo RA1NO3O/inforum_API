@@ -3,7 +3,7 @@ const sql = require('mssql');
 
 module.exports = function (app, db) {
     var bodyParser = require('body-parser');
-    var myDate;
+    var myDate,startDate=new Date();
     app.use(bodyParser.json({ limit: '1mb' }));
     app.use(bodyParser.urlencoded({
         extended: true
@@ -12,7 +12,7 @@ module.exports = function (app, db) {
     //基础响应
     app.get('/', function (req, res) {
         myDate = new Date();
-        res.send('Inforum Web API V1.0<br/>' + myDate.toLocaleTimeString());
+        res.send('Inforum Web API V1.0<br/>' + myDate.toLocaleTimeString()+'<br/>Service started at '+startDate.toLocaleTimeString());
     });
     app.get('/whoRyou', (req, res) => {
         res.send('Inforum Web API V1.0<br/> Developed by RA1N at http://github.com/RA1NO3O');
@@ -24,7 +24,7 @@ module.exports = function (app, db) {
         res.send('test passed.');
     })
 
-    //登录
+    //查找用户
     app.get('/api/searchUser', function (req, res) {
         sql.connect(config).then(function () {
             new sql.Request()
@@ -42,6 +42,7 @@ module.exports = function (app, db) {
             res.send('error');
         });
     });
+    //登录
     app.get('/api/login', function (req, res) {
         sql.connect(config).then(function () {
             new sql.Request()
@@ -64,7 +65,6 @@ module.exports = function (app, db) {
 
     //注册
     app.post('/api/createAccount/', function (req, res) {
-        console.log(req);
         sql.connect(config).then(function () {
             new sql.Request()
                 .input('username', sql.VarChar, req.body.username)
@@ -85,7 +85,7 @@ module.exports = function (app, db) {
                 });
         }).catch(function (err) {
             console.log(err);
-            res.send('error.');
+            res.send(err);
         });
     });
 
@@ -110,7 +110,6 @@ module.exports = function (app, db) {
             res.send(err);
         });
     });
-
 
     //请求传入id => 获取帖子详情
     app.get('/api/getPostDetail/:id', function (req, res) {
@@ -168,9 +167,30 @@ module.exports = function (app, db) {
         });
     });
 
+    //新建帖子
+    app.post('/api/newPost',function (req,res){
+        sql.connect(config).then(function(){
+            new sql.Request()
+                .input('title',sql.VarChar,req.body.title=='null'?null:req.body.title)
+                .input('content',sql.VarChar,req.body.content)
+                .input('tags',sql.VarChar,req.body.tags=='null'?null:req.body.tags)
+                .input('imgURL',sql.VarChar,req.body.imgURL=='null'?null:req.body.imgURL)
+                .input('editorID',sql.Int,req.body.editorID)
+                .query(
+                    'INSERT INTO tbPost (title,body,tags,imageURL,editorID)\
+                     VALUES (@title,@content,@tags,@imgURL,@editorID);'
+                ).then(function(recordset){
+                    console.log(req.body);
+                    res.send('success.');
+                });
+        }).catch(function(err){
+            console.log(err);
+            res.send(err);
+        });
+    });
+
     //删除账户
     app.delete('/api/deleteUser/', function (req, res) {
-        console.log(req);
         sql.connect(config).then(function () {
             new sql.Request()
                 .input('userID', sql.VarChar, req.body.userID)
@@ -178,11 +198,11 @@ module.exports = function (app, db) {
                     'DELETE FROM tbLogin_userToken WHERE id=@userID;'
                 ).then(function (recordset) {
                     console.log(req.body);
-                    res.send('success.');
+                    res.json(recordset);
                 });
         }).catch(function (err) {
             console.log(err);
-            res.send('error.');
+            res.send(err);
         });
     });
 
