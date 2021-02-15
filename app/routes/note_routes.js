@@ -28,7 +28,7 @@ module.exports = function (app, db) {
     app.get('/api/searchUser', function (req, res) {
         sql.connect(config).then(function () {
             new sql.Request()
-                .input('username', sql.NVarChar, req.query.username) //多字段查询
+                .input('username', sql.VarChar, req.query.username) //多字段查询
                 .query(
                     'SELECT id, username from dbo.tbLogin_userToken\
                      WHERE (username = @username OR email = @username) OR (phone = @username)'
@@ -46,8 +46,8 @@ module.exports = function (app, db) {
     app.get('/api/login', function (req, res) {
         sql.connect(config).then(function () {
             new sql.Request()
-                .input('username', sql.NVarChar, req.query.username)
-                .input('password', sql.NVarChar, req.query.password)
+                .input('username', sql.VarChar, req.query.username)
+                .input('password', sql.VarChar, req.query.password)
                 .query(
                     'SELECT id from dbo.tbLogin_userToken\
                      WHERE (username = @username OR email = @username OR phone = @username)\
@@ -67,10 +67,10 @@ module.exports = function (app, db) {
     app.post('/api/createAccount/', function (req, res) {
         sql.connect(config).then(function () {
             new sql.Request()
-                .input('username', sql.NVarChar, req.body.username)
-                .input('password', sql.NVarChar, req.body.password)
-                .input('email', sql.NVarChar, req.body.email=='null'?null:req.body.email)
-                .input('phone', sql.NVarChar, req.body.phone=='null'?null:req.body.phone)
+                .input('username', sql.VarChar, req.body.username)
+                .input('password', sql.VarChar, req.body.password)
+                .input('email', sql.VarChar, req.body.email=='null'?null:req.body.email)
+                .input('phone', sql.VarChar, req.body.phone=='null'?null:req.body.phone)
                 // .input('nickname', sql.NVarChar, req.body.nickname)
                 // .input('birthday', sql.Date, req.body.birthday)
                 // .input('bio', sql.NVarChar, req.body.bio)
@@ -174,7 +174,7 @@ module.exports = function (app, db) {
                 .input('title',sql.NVarChar,req.body.title=='null'?null:req.body.title)
                 .input('content',sql.NVarChar,req.body.content)
                 .input('tags',sql.NVarChar,req.body.tags=='null'?null:req.body.tags)
-                .input('imgURL',sql.NVarChar,req.body.imgURL=='null'?null:req.body.imgURL)
+                .input('imgURL',sql.VarChar,req.body.imgURL=='null'?null:req.body.imgURL)
                 .input('editorID',sql.Int,req.body.editorID)
                 .query(
                     'INSERT INTO tbPost (title,body,tags,imageURL,editorID)\
@@ -193,7 +193,7 @@ module.exports = function (app, db) {
     app.delete('/api/deleteUser/', function (req, res) {
         sql.connect(config).then(function () {
             new sql.Request()
-                .input('userID', sql.NVarChar, req.body.userID)
+                .input('userID', sql.VarChar, req.body.userID)
                 .query(
                     'DELETE FROM tbLogin_userToken WHERE id=@userID;'
                 ).then(function (recordset) {
