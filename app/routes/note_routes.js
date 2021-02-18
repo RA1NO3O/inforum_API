@@ -3,7 +3,7 @@ const sql = require('mssql');
 
 module.exports = function (app, db) {
     var bodyParser = require('body-parser');
-    var myDate,startDate=new Date();
+    var myDate, startDate = new Date();
     app.use(bodyParser.json({ limit: '1mb' }));
     app.use(bodyParser.urlencoded({
         extended: true
@@ -12,20 +12,20 @@ module.exports = function (app, db) {
     //基础响应
     app.get('/', function (req, res) {
         myDate = new Date();
-        res.send('Inforum Web API V1.0<br/>' + myDate.toLocaleTimeString()+'<br/>Service started at '+startDate.toLocaleTimeString());
+        res.send('Inforum Web API V1.0<br/>' + myDate.toLocaleTimeString() + '<br/>Service started at ' + startDate.toLocaleTimeString());
     });
-    app.get('/whoRyou', (req, res) => {
+    app.get('/whoRyou/', (req, res) => {
         res.send('Inforum Web API V1.0<br/> Developed by RA1N at http://github.com/RA1NO3O');
     });
-    app.get('/hello', function (req, res) {
+    app.get('/hello/', function (req, res) {
         res.send('Hello from RA1NO3O');
     });
-    app.get('/test', function (req, res) {
+    app.get('/test/', function (req, res) {
         res.send('test passed.');
     })
 
     //查找用户
-    app.get('/api/searchUser', function (req, res) {
+    app.get('/api/searchUser/', function (req, res) {
         sql.connect(config).then(function () {
             new sql.Request()
                 .input('username', sql.VarChar, req.query.username) //多字段查询
@@ -43,7 +43,7 @@ module.exports = function (app, db) {
         });
     });
     //登录
-    app.get('/api/login', function (req, res) {
+    app.get('/api/login/', function (req, res) {
         sql.connect(config).then(function () {
             new sql.Request()
                 .input('username', sql.VarChar, req.query.username)
@@ -69,8 +69,8 @@ module.exports = function (app, db) {
             new sql.Request()
                 .input('username', sql.VarChar, req.body.username)
                 .input('password', sql.VarChar, req.body.password)
-                .input('email', sql.VarChar, req.body.email=='null'?null:req.body.email)
-                .input('phone', sql.VarChar, req.body.phone=='null'?null:req.body.phone)
+                .input('email', sql.VarChar, req.body.email == 'null' ? null : req.body.email)
+                .input('phone', sql.VarChar, req.body.phone == 'null' ? null : req.body.phone)
                 // .input('nickname', sql.NVarChar, req.body.nickname)
                 // .input('birthday', sql.Date, req.body.birthday)
                 // .input('bio', sql.NVarChar, req.body.bio)
@@ -168,22 +168,61 @@ module.exports = function (app, db) {
     });
 
     //新建帖子
-    app.post('/api/newPost',function (req,res){
-        sql.connect(config).then(function(){
+    app.post('/api/newPost/', function (req, res) {
+        sql.connect(config).then(function () {
             new sql.Request()
-                .input('title',sql.NVarChar,req.body.title=='null'?null:req.body.title)
-                .input('content',sql.NVarChar,req.body.content)
-                .input('tags',sql.NVarChar,req.body.tags=='null'?null:req.body.tags)
-                .input('imgURL',sql.VarChar,req.body.imgURL=='null'?null:req.body.imgURL)
-                .input('editorID',sql.Int,req.body.editorID)
+                .input('title', sql.NVarChar, req.body.title == 'null' ? null : req.body.title)
+                .input('content', sql.NVarChar, req.body.content)
+                .input('tags', sql.NVarChar, req.body.tags == 'null' ? null : req.body.tags)
+                .input('imgURL', sql.VarChar, req.body.imgURL == 'null' ? null : req.body.imgURL)
+                .input('editorID', sql.Int, req.body.editorID)
                 .query(
                     'INSERT INTO tbPost (title,body,tags,imageURL,editorID)\
                      VALUES (@title,@content,@tags,@imgURL,@editorID);'
-                ).then(function(recordset){
+                ).then(function (recordset) {
                     console.log(req.body);
                     res.send('success.');
                 });
-        }).catch(function(err){
+        }).catch(function (err) {
+            console.log(err);
+            res.send(err);
+        });
+    });
+
+    //编辑帖子
+    app.post('/api/editPost/', function (req, res) {
+        sql.connect(config).then(function () {
+            new sql.Request()
+                .input('postID', sql.Int, req.body.postID)
+                .input('title', sql.NVarChar, req.body.title == 'null' ? null : req.body.title)
+                .input('content', sql.NVarChar, req.body.content)
+                .input('tags', sql.NVarChar, req.body.tags == 'null' ? null : req.body.tags)
+                .input('imgURL', sql.VarChar, req.body.imgURL == 'null' ? null : req.body.imgURL)
+                .query(
+                    'UPDATE tbPost\
+                     SET title=@title, body=@content, tags=@tags, imageURL=@imgURL, lastEditTime=getDate()\
+                     WHERE postID = @postID;'
+                ).then(function (recordset) {
+                    console.log('post ' + req.body.postID + 'has been updated at ' + myDate.toLocaleTimeString());
+                    res.send('success.');
+                });
+        }).catch(function (err) {
+            console.log(err);
+            res.send(err);
+        });
+    });
+
+    //删除帖子
+    app.delete('/api/deletePost/', function (req, res) {
+        sql.connect(config).then(function () {
+            new sql.Request()
+                .input('postID', sql.Int, req.body.postID)
+                .query('DELETE FROM tbPost WHERE postID=@postID;')
+                .then(function (recordset) {
+                    console.log('Post ' + req.body.postID + ' has been deleted at ' + myDate.toLocaleTimeString());
+                    res.send('success.');
+                })
+        }).catch(function (err) {
             console.log(err);
             res.send(err);
         });
@@ -193,11 +232,11 @@ module.exports = function (app, db) {
     app.delete('/api/deleteUser/', function (req, res) {
         sql.connect(config).then(function () {
             new sql.Request()
-                .input('userID', sql.VarChar, req.body.userID)
+                .input('userID', sql.Int, req.body.userID)
                 .query(
                     'DELETE FROM tbLogin_userToken WHERE id=@userID;'
                 ).then(function (recordset) {
-                    console.log(req.body);
+                    console.log('User ' + req.body.userID + ' has been deleted at ' + myDate.toLocaleTimeString());
                     res.json(recordset);
                 });
         }).catch(function (err) {
