@@ -94,12 +94,15 @@ module.exports = function (app, db) {
         sql.connect(config).then(function () {
             new sql.Request()
                 .input('id', sql.Int, req.params.id)
-                .query('SELECT a.postID, a.title, a.body_S, a.imageURL, a.lastEditTime, a.nickname, a.tags, \
-                        a.avatarURL, a.likeCount,a.dislikeCount, a.commentCount, a.collectCount, a.editorID,\
-                        b.user_ID, b.isCollected, b.like_State, b.collectTime\
-                        FROM [Inforum_Data_Center].[dbo].[getPosts] AS a LEFT OUTER JOIN postStateList AS b \
-                        ON a.postID = b.post_ID\
-                        WHERE b.user_ID = @id OR b.user_ID IS NULL;'
+                .query(
+                    'SELECT DISTINCT a.postID, a.title, a.body_S, a.imageURL, a.lastEditTime, a.nickname, a.tags, \
+                     a.avatarURL, a.likeCount,a.dislikeCount, a.commentCount, a.collectCount, a.editorID,\
+                     iif(EXISTS(SELECT * WHERE b.user_ID=10000022 AND b.post_ID=a.postID),b.user_ID,10000022)AS user_ID,\
+                     iif(EXISTS(SELECT * WHERE b.user_ID=10000022 AND b.post_ID=a.postID),b.isCollected,NULL)AS isCollected,\
+                     iif(EXISTS(SELECT * WHERE b.user_ID=10000022 AND b.post_ID=a.postID),b.like_State,NULL)AS like_State,\
+                     iif(EXISTS(SELECT * WHERE b.user_ID=10000022 AND b.post_ID=a.postID),b.collectTime,NULL)AS collectTime\
+                     FROM getPosts AS a LEFT OUTER JOIN postStateList AS b \
+                     ON a.postID = b.post_ID ORDER BY lastEditTime DESC;'
                 ).then(function (recordset) {
                     console.dir(recordset);
                     res.json(recordset);
