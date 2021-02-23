@@ -90,19 +90,20 @@ module.exports = function (app, db) {
     });
 
     //首页帖子流
-    app.get('/api/getPosts/:id', function (req, res) {
+    app.get('/api/getPosts/:index', function (req, res) {
         sql.connect(config).then(function () {
             new sql.Request()
-                .input('id', sql.Int, req.params.id)
+                .input('index',sql.Int, req.params.index)
+                .input('id', sql.Int, req.query.id)
                 .query(
                     'SELECT DISTINCT a.postID, a.title, a.body_S, a.imageURL, a.lastEditTime, a.nickname, a.tags, \
                      a.avatarURL, a.likeCount,a.dislikeCount, a.commentCount, a.collectCount, a.editorID,\
-                     iif(EXISTS(SELECT * WHERE b.user_ID=10000022 AND b.post_ID=a.postID),b.user_ID,10000022)AS user_ID,\
-                     iif(EXISTS(SELECT * WHERE b.user_ID=10000022 AND b.post_ID=a.postID),b.isCollected,NULL)AS isCollected,\
-                     iif(EXISTS(SELECT * WHERE b.user_ID=10000022 AND b.post_ID=a.postID),b.like_State,NULL)AS like_State,\
-                     iif(EXISTS(SELECT * WHERE b.user_ID=10000022 AND b.post_ID=a.postID),b.collectTime,NULL)AS collectTime\
+                     iif(EXISTS(SELECT * WHERE b.user_ID=@id AND b.post_ID=a.postID),b.user_ID,@id)AS user_ID,\
+                     iif(EXISTS(SELECT * WHERE b.user_ID=@id AND b.post_ID=a.postID),b.isCollected,NULL)AS isCollected,\
+                     iif(EXISTS(SELECT * WHERE b.user_ID=@id AND b.post_ID=a.postID),b.like_State,NULL)AS like_State,\
+                     iif(EXISTS(SELECT * WHERE b.user_ID=@id AND b.post_ID=a.postID),b.collectTime,NULL)AS collectTime\
                      FROM getPosts AS a LEFT OUTER JOIN postStateList AS b \
-                     ON a.postID = b.post_ID ORDER BY lastEditTime DESC;'
+                     ON a.postID = b.post_ID ORDER BY lastEditTime DESC OFFSET @index ROW FETCH NEXT 10 ROW ONLY;'
                 ).then(function (recordset) {
                     console.dir(recordset);
                     res.json(recordset);
@@ -206,6 +207,7 @@ module.exports = function (app, db) {
                      SET title=@title, body=@content, tags=@tags, imageURL=@imgURL, lastEditTime=getDate()\
                      WHERE postID = @postID;'
                 ).then(function (recordset) {
+                    myDate = new Date();
                     console.log('post ' + req.body.postID + 'has been updated at ' + myDate.toLocaleTimeString());
                     res.send('success.');
                 });
@@ -222,6 +224,7 @@ module.exports = function (app, db) {
                 .input('postID', sql.Int, req.body.postID)
                 .query('DELETE FROM tbPost WHERE postID=@postID;')
                 .then(function (recordset) {
+                    myDate = new Date();
                     console.log('Post ' + req.body.postID + ' has been deleted at ' + myDate.toLocaleTimeString());
                     res.send('success.');
                 })
@@ -239,6 +242,7 @@ module.exports = function (app, db) {
                 .query(
                     'DELETE FROM tbLogin_userToken WHERE id=@userID;'
                 ).then(function (recordset) {
+                    myDate = new Date();
                     console.log('User ' + req.body.userID + ' has been deleted at ' + myDate.toLocaleTimeString());
                     res.json(recordset);
                 });
