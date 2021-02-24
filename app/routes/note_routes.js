@@ -1,4 +1,4 @@
-const config = require('../../config/db')   //TODO:请配置好对应的变量.
+const config = require('../../config/db')   //请配置好对应的变量.
 const sql = require('mssql');
 
 module.exports = function (app, db) {
@@ -55,7 +55,6 @@ module.exports = function (app, db) {
                 ).then(function (recordset) {
                     console.dir(recordset);
                     res.json(recordset);
-                    //TODO:记录日志
                 });
         }).catch(function (err) {
             console.log(err);
@@ -93,7 +92,7 @@ module.exports = function (app, db) {
     app.get('/api/getPosts/:index', function (req, res) {
         sql.connect(config).then(function () {
             new sql.Request()
-                .input('index',sql.Int, req.params.index)
+                .input('index', sql.Int, req.params.index)
                 .input('id', sql.Int, req.query.id)
                 .query(
                     'SELECT DISTINCT a.postID, a.title, a.body_S, a.imageURL, a.lastEditTime, a.nickname, a.tags, \
@@ -152,6 +151,90 @@ module.exports = function (app, db) {
 
         });
     });
+
+    //点赞👍
+    app.post('/api/thumbUp/', function (req, res) {
+        sql.connect(config).then(function () {
+            new sql.Request()
+                .input('userID', sql.Int, req.body.userID)
+                .input('postID', sql.Int, req.body.postID)
+                .query(
+                    'DECLARE @likeState int;\
+                     SET @likeState=(SELECT like_State FROM postStateList \
+                             WHERE post_ID=@postID AND user_ID=@userID);\
+                     IF NOT EXISTS(SELECT * FROM postStateList\
+                         WHERE post_ID=@postID AND user_ID=@userID)\
+                             INSERT INTO postStateList(post_ID,user_ID,like_State)\
+                             VALUES(@postID,@userID,1)\
+                     ELSE\
+                         UPDATE postStateList SET \
+                         like_State=IIF(@likeState=0 OR @likeState=2,1,0)\
+                         WHERE post_ID=@postID AND user_ID=@userID;'
+                ).then(function (recordset) {
+                    myDate = new Date();
+                    console.log('post ' + req.body.postID + ' state of user(' + req.body.userID + ') has been updated at ' + myDate.toLocaleTimeString());
+                    res.json(recordset);
+                });
+        }).catch(function (err) {
+            console.log(err);
+            res.send(err);
+        });
+    });
+    //踩👎
+    app.post('/api/thumbDown/', function (req, res) {
+        sql.connect(config).then(function () {
+            new sql.Request()
+                .input('userID', sql.Int, req.body.userID)
+                .input('postID', sql.Int, req.body.postID)
+                .query(
+                    'DECLARE @likeState int;\
+                     SET @likeState=(SELECT like_State FROM postStateList \
+                             WHERE post_ID=@postID AND user_ID=@userID);\
+                     IF NOT EXISTS(SELECT * FROM postStateList\
+                         WHERE post_ID=@postID AND user_ID=@userID)\
+                             INSERT INTO postStateList(post_ID,user_ID,like_State)\
+                             VALUES(@postID,@userID,2)\
+                     ELSE\
+                         UPDATE postStateList SET \
+                         like_State=IIF(@likeState=0 OR @likeState=1,2,0)\
+                         WHERE post_ID=@postID AND user_ID=@userID;'
+                ).then(function (recordset) {
+                    myDate = new Date();
+                    console.log('post ' + req.body.postID + ' state of user(' + req.body.userID + ') has been updated at ' + myDate.toLocaleTimeString());
+                    res.json(recordset);
+                });
+        }).catch(function (err) {
+            console.log(err);
+            res.send(err);
+        });
+    });
+    //收藏⭐
+    app.post('/api/starPost/', function (req, res) {
+        sql.connect(config).then(function () {
+            new sql.Request()
+                .input('userID', sql.Int, req.body.userID)
+                .input('postID', sql.Int, req.body.postID)
+                .query(
+                    'IF NOT EXISTS(SELECT * FROM postStateList\
+                         WHERE post_ID=@postID AND user_ID=@userID)\
+                             INSERT INTO postStateList(post_ID,user_ID,isCollected,collectTime)\
+                             VALUES(@postID,@userID,1,getDate())\
+                     ELSE\
+                         UPDATE postStateList SET \
+                         isCollected=IIF((SELECT isCollected FROM postStateList \
+                            WHERE post_ID=@postID AND user_ID=@userID)=1,0,1)\
+                         WHERE post_ID=@postID AND user_ID=@userID;'
+                ).then(function (recordset) {
+                    myDate = new Date();
+                    console.log('post ' + req.body.postID + ' state of user(' + req.body.userID + ') has been updated at ' + myDate.toLocaleTimeString());
+                    res.json(recordset);
+                });
+        }).catch(function (err) {
+            console.log(err);
+            res.send(err);
+        });
+    });
+
 
     //请求传入id => 获取个人资料
     app.get('/api/getProfile/:id', function (req, res) {
