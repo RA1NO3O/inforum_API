@@ -79,6 +79,7 @@ module.exports = function (app, db) {
                     'insert into dbo.tbLogin_userToken(username,password,email,phone)\
                         VALUES (@username, @password, @email, @phone);'
                 ).then(function (recordset) {
+                    console.dir(recordset); //在终端输出
                     console.log(req.body);
                     res.send('success.');
                 });
@@ -89,20 +90,17 @@ module.exports = function (app, db) {
     });
 
     //首页帖子流
-    app.get('/api/getPosts/:index', function (req, res) {
+    app.get('/api/getPosts/:id', function (req, res) {
         sql.connect(config).then(function () {
             new sql.Request()
-                .input('index', sql.Int, req.params.index)
-                .input('id', sql.Int, req.query.id)
+                .input('userID', sql.Int, req.params.id)
                 .query(
                     'SELECT DISTINCT a.postID, a.title, a.body_S, a.imageURL, a.lastEditTime, a.nickname, a.tags, \
                      a.avatarURL, a.likeCount,a.dislikeCount, a.commentCount, a.collectCount, a.editorID,\
-                     iif(EXISTS(SELECT * WHERE b.user_ID=@id AND b.post_ID=a.postID),b.user_ID,@id)AS user_ID,\
-                     iif(EXISTS(SELECT * WHERE b.user_ID=@id AND b.post_ID=a.postID),b.isCollected,NULL)AS isCollected,\
-                     iif(EXISTS(SELECT * WHERE b.user_ID=@id AND b.post_ID=a.postID),b.like_State,NULL)AS like_State,\
-                     iif(EXISTS(SELECT * WHERE b.user_ID=@id AND b.post_ID=a.postID),b.collectTime,NULL)AS collectTime\
-                     FROM getPosts AS a LEFT OUTER JOIN postStateList AS b \
-                     ON a.postID = b.post_ID ORDER BY lastEditTime DESC OFFSET @index ROW FETCH NEXT 10 ROW ONLY;'
+                     iif(EXISTS(SELECT * WHERE b.user_ID=@userID AND b.post_ID=a.postID),b.isCollected,NULL)AS isCollected,\
+                     iif(EXISTS(SELECT * WHERE b.user_ID=@userID AND b.post_ID=a.postID),b.like_State,NULL)AS like_State\
+                     FROM getPosts AS a LEFT OUTER JOIN postStateList AS b ON a.postID = b.post_ID\
+                     ORDER BY lastEditTime DESC;'
                 ).then(function (recordset) {
                     console.dir(recordset);
                     res.json(recordset);
@@ -137,10 +135,17 @@ module.exports = function (app, db) {
         sql.connect(config).then(function () {
             new sql.Request()
                 .input('postID', sql.Int, req.params.id)
+                .input('userID', sql.Int, req.query.userID)
                 .query(
-                    'SELECT TOP (1000) [postID],[body],[imageURL],[lastEditTime],[username],[avatarURL],[nickname]\
-                     FROM [Inforum_Data_Center].[dbo].[getPostComment]\
-                     WHERE  getPostComment.target_comment_postID = @postID'
+                    'SELECT [postID],[body],[imageURL],[lastEditTime],[username],[avatarURL],[nickname],\
+                    iif(EXISTS(SELECT * WHERE b.user_ID=@userID AND b.post_ID=a.postID),b.like_State,NULL)AS like_State,\
+                    MAX(b.user_ID) AS user_ID\
+                    FROM [Inforum_Data_Center].[dbo].[getPostComment]as a \
+                    LEFT OUTER JOIN postStateList AS b \
+                    ON a.postID=b.post_ID\
+                    WHERE  a.target_comment_postID = @postID\
+                    GROUP BY [postID],[body],[imageURL],[lastEditTime],[username],[avatarURL],[nickname],like_State,user_ID,post_ID\
+                    ORDER BY lastEditTime DESC'
                 ).then(function (recordset) {
                     console.dir(recordset);
                     res.json(recordset);
@@ -267,6 +272,7 @@ module.exports = function (app, db) {
                     'INSERT INTO tbPost (title,body,tags,imageURL,editorID)\
                      VALUES (@title,@content,@tags,@imgURL,@editorID);'
                 ).then(function (recordset) {
+                    console.dir(recordset); //在终端输出
                     console.log(req.body);
                     res.send('success.');
                 });
@@ -290,6 +296,7 @@ module.exports = function (app, db) {
                      SET title=@title, body=@content, tags=@tags, imageURL=@imgURL, lastEditTime=getDate()\
                      WHERE postID = @postID;'
                 ).then(function (recordset) {
+                    console.dir(recordset); //在终端输出
                     myDate = new Date();
                     console.log('post ' + req.body.postID + 'has been updated at ' + myDate.toLocaleTimeString());
                     res.send('success.');
@@ -307,8 +314,30 @@ module.exports = function (app, db) {
                 .input('postID', sql.Int, req.body.postID)
                 .query('DELETE FROM tbPost WHERE postID=@postID;')
                 .then(function (recordset) {
+                    console.dir(recordset); //在终端输出
                     myDate = new Date();
                     console.log('Post ' + req.body.postID + ' has been deleted at ' + myDate.toLocaleTimeString());
+                    res.send('success.');
+                })
+        }).catch(function (err) {
+            console.log(err);
+            res.send(err);
+        });
+    });
+
+    //修改用户名
+    app.post('/api/editUserName/', function (req, res) {
+        sql.connect(config).then(function () {
+            new sql.Request()
+                .input('userID', sql.Int, req.body.userID)
+                .input('newUserName', sql.VarChar, req.body.newUserName)
+                .query(
+                    'UPDATE tbLogin_userToken SET username = @userName\
+                     WHERE id=@userID'
+                ).then(function (recordset) {
+                    console.dir(recordset); //在终端输出
+                    myDate = new Date();
+                    console.log('User ' + req.body.userID + 'userName has been changed at' + myDate.toLocaleTimeString());
                     res.send('success.');
                 })
         }).catch(function (err) {
@@ -325,6 +354,7 @@ module.exports = function (app, db) {
                 .query(
                     'DELETE FROM tbLogin_userToken WHERE id=@userID;'
                 ).then(function (recordset) {
+                    console.dir(recordset); //在终端输出
                     myDate = new Date();
                     console.log('User ' + req.body.userID + ' has been deleted at ' + myDate.toLocaleTimeString());
                     res.json(recordset);
