@@ -33,6 +33,7 @@ module.exports = function (app, db) {
                     'SELECT id, username from dbo.tbLogin_userToken\
                      WHERE (username = @userName OR email = @userName) OR (phone = @userName)'
                 ).then(function (recordset) {
+                    console.log(req.query.userName);
                     console.dir(recordset);
                     res.json(recordset);
                     //TODO:记录日志
