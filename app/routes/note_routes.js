@@ -28,10 +28,10 @@ module.exports = function (app, db) {
     app.get('/api/searchUser/', function (req, res) {
         sql.connect(config).then(function () {
             new sql.Request()
-                .input('username', sql.VarChar, req.query.username) //多字段查询
+                .input('userName', sql.VarChar, req.query.userName) //多字段查询
                 .query(
                     'SELECT id, username from dbo.tbLogin_userToken\
-                     WHERE (username = @username OR email = @username) OR (phone = @username)'
+                     WHERE (username = @userName OR email = @userName) OR (phone = @userName)'
                 ).then(function (recordset) {
                     console.dir(recordset);
                     res.json(recordset);
