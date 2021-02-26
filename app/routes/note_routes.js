@@ -96,7 +96,7 @@ module.exports = function (app, db) {
                 .input('userID', sql.Int, req.params.id)
                 .query(
                     'SELECT DISTINCT a.postID, a.title, a.body_S, a.imageURL, a.lastEditTime, a.nickname, a.tags, \
-                     a.avatarURL, a.likeCount,a.dislikeCount, a.commentCount, a.collectCount, a.editorID,\
+                     a.avatarURL, a.likeCount,a.dislikeCount, a.commentCount, a.collectCount, IIF(a.editorID=@userID,1,0) AS isEditor,\
                      iif(EXISTS(SELECT * WHERE b.user_ID=@userID AND b.post_ID=a.postID),b.isCollected,NULL)AS isCollected,\
                      iif(EXISTS(SELECT * WHERE b.user_ID=@userID AND b.post_ID=a.postID),b.like_State,NULL)AS like_State\
                      FROM getPosts AS a LEFT OUTER JOIN postStateList AS b ON a.postID = b.post_ID\
