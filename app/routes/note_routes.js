@@ -137,7 +137,7 @@ module.exports = function (app, db) {
                 .input('postID', sql.Int, req.params.id)
                 .input('userID', sql.Int, req.query.userID)
                 .query(
-                    'SELECT [postID],[body],[imageURL],[lastEditTime],[username],[avatarURL],[nickname],[likeCount]\
+                    'SELECT [postID],[body],[imageURL],[lastEditTime],[username],[avatarURL],[nickname],[likeCount],\
                     iif(EXISTS(SELECT * WHERE b.user_ID=@userID AND b.post_ID=a.postID),b.like_State,NULL)AS like_State,\
                     MAX(b.user_ID) AS user_ID\
                     FROM [Inforum_Data_Center].[dbo].[getPostComment]as a \
