@@ -119,8 +119,8 @@ module.exports = function (app, db) {
             new sql.Request()
                 .input('postID', sql.Int, req.params.id) //SQL注入
                 .query(
-                    'SELECT body FROM [Inforum_Data_Center].[dbo].[getPostDetail]\
-                    WHERE getPostDetail.postID = @postID'
+                    'SELECT * FROM [Inforum_Data_Center].[dbo].[getPostDetail]\
+                    WHERE postID = @postID'
                 ).then(function (recordset) {
                     console.dir(recordset);
                     res.json(recordset);
