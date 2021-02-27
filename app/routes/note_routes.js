@@ -177,9 +177,11 @@ module.exports = function (app, db) {
                          like_State=IIF(@likeState=0 OR @likeState=2,1,0)
                          WHERE post_ID=@postID AND user_ID=@userID;`
                 ).then(function (recordset) {
+                    res.send('success.');
                     myDate = new Date();
+                    console.dir(recordset);
                     console.log('post ' + req.body.postID + ' state of user(' + req.body.userID + ') has been updated at ' + myDate.toLocaleTimeString());
-                    res.json(recordset);
+                    // res.json(recordset);
                 });
         }).catch(function (err) {
             console.log(err);
@@ -205,9 +207,11 @@ module.exports = function (app, db) {
                          like_State=IIF(@likeState=0 OR @likeState=1,2,0)
                          WHERE post_ID=@postID AND user_ID=@userID;`
                 ).then(function (recordset) {
+                    res.send('success.');
                     myDate = new Date();
+                    console.dir(recordset);
                     console.log('post ' + req.body.postID + ' state of user(' + req.body.userID + ') has been updated at ' + myDate.toLocaleTimeString());
-                    res.json(recordset);
+                    // res.json(recordset);
                 });
         }).catch(function (err) {
             console.log(err);
@@ -231,9 +235,11 @@ module.exports = function (app, db) {
                             WHERE post_ID=@postID AND user_ID=@userID)=1,0,1)
                          WHERE post_ID=@postID AND user_ID=@userID;`
                 ).then(function (recordset) {
+                    res.send('success.');
                     myDate = new Date();
+                    console.dir(recordset);
                     console.log('post ' + req.body.postID + ' state of user(' + req.body.userID + ') has been updated at ' + myDate.toLocaleTimeString());
-                    res.json(recordset);
+                    // res.json(recordset);
                 });
         }).catch(function (err) {
             console.log(err);
@@ -283,6 +289,28 @@ module.exports = function (app, db) {
         });
     });
 
+    //新建回复
+    app.post('/api/newComment/', function (req, res) {
+        sql.connect(config).then(function () {
+            new sql.Request()
+                .input('targetPostID', sql.Int, req.body.targetPostID)
+                .input('content', sql.NVarChar, req.body.content)
+                .input('imgURL', sql.VarChar, req.body.imgURL == 'null' ? null : req.body.imgURL)
+                .input('editorID', sql.Int, req.body.editorID)
+                .query(
+                    `INSERT INTO tbPost (target_comment_postID,body,imageURL,editorID)
+                     VALUES (@targetPostID,@content,@imgURL,@editorID);`
+                ).then(function (recordset) {
+                    console.dir(recordset); //在终端输出
+                    console.log(req.body);
+                    res.send('success.');
+                });
+        }).catch(function (err) {
+            console.log(err);
+            res.send(err);
+        });
+    });
+
     //编辑帖子
     app.post('/api/editPost/', function (req, res) {
         sql.connect(config).then(function () {
@@ -297,10 +325,10 @@ module.exports = function (app, db) {
                      SET title=@title, body=@content, tags=@tags, imageURL=@imgURL, lastEditTime=getDate()
                      WHERE postID = @postID;`
                 ).then(function (recordset) {
+                    res.send('success.');
                     console.dir(recordset); //在终端输出
                     myDate = new Date();
                     console.log('post ' + req.body.postID + 'has been updated at ' + myDate.toLocaleTimeString());
-                    res.send('success.');
                 });
         }).catch(function (err) {
             console.log(err);
@@ -336,10 +364,11 @@ module.exports = function (app, db) {
                     `UPDATE tbLogin_userToken SET username = @userName
                      WHERE id=@userID`
                 ).then(function (recordset) {
+                    res.send('success.');
                     console.dir(recordset); //在终端输出
                     myDate = new Date();
                     console.log('User ' + req.body.userID + 'userName has been changed at' + myDate.toLocaleTimeString());
-                    res.send('success.');
+
                 });
         }).catch(function (err) {
             console.log(err);
