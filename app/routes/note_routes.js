@@ -1,4 +1,4 @@
-const config = require('../../config/db')   //请配置好对应的变量.
+const config = require('../../config/db');  //请配置好对应的变量.
 const sql = require('mssql');
 
 module.exports = function (app, db) {
@@ -14,15 +14,15 @@ module.exports = function (app, db) {
         myDate = new Date();
         res.send('Inforum Web API V1.0<br/>' + myDate.toLocaleTimeString() + '<br/>Service started at ' + startDate.toLocaleTimeString());
     });
-    app.get('/whoRyou/', (req, res) => {
-        res.send('Inforum Web API V1.0<br/> Developed by RA1N at http://github.com/RA1NO3O');
+    app.get('/whoRyou/', function (req, res) {
+        res.send('Inforum Web API V1.0<br/> Developed by RA1N at <a href="http://github.com/RA1NO3O">Github/RA1NO3O</a>');
     });
     app.get('/hello/', function (req, res) {
-        res.send('Hello from RA1NO3O');
+        res.send('Hello from RA1NO3O (oﾟvﾟ)ノ');
     });
     app.get('/test/', function (req, res) {
         res.send('test passed.');
-    })
+    });
 
     //查找用户
     app.get('/api/searchUser/', function (req, res) {
@@ -30,8 +30,8 @@ module.exports = function (app, db) {
             new sql.Request()
                 .input('userName', sql.VarChar, req.query.userName) //多字段查询
                 .query(
-                    'SELECT id, username from dbo.tbLogin_userToken\
-                     WHERE (username = @userName OR email = @userName) OR (phone = @userName)'
+                    `SELECT id, username from dbo.tbLogin_userToken
+                     WHERE (username = @userName OR email = @userName) OR (phone = @userName)`
                 ).then(function (recordset) {
                     console.log(req.query.userName);
                     console.dir(recordset);
@@ -50,9 +50,9 @@ module.exports = function (app, db) {
                 .input('username', sql.VarChar, req.query.username)
                 .input('password', sql.VarChar, req.query.password)
                 .query(
-                    'SELECT id from dbo.tbLogin_userToken\
-                     WHERE (username = @username OR email = @username OR phone = @username)\
-                     AND password = @password'
+                    `SELECT id from dbo.tbLogin_userToken
+                     WHERE (username = @username OR email = @username OR phone = @username)
+                     AND password = @password`
                 ).then(function (recordset) {
                     console.dir(recordset);
                     res.json(recordset);
@@ -77,8 +77,8 @@ module.exports = function (app, db) {
                 // .input('gender', sql.NVarChar, req.body.gender)
                 // .input('location', sql.NVarChar, req.body.location)
                 .query(
-                    'insert into dbo.tbLogin_userToken(username,password,email,phone)\
-                        VALUES (@username, @password, @email, @phone);'
+                    `insert into dbo.tbLogin_userToken(username,password,email,phone)
+                        VALUES (@username, @password, @email, @phone);`
                 ).then(function (recordset) {
                     console.dir(recordset); //在终端输出
                     console.log(req.body);
@@ -96,12 +96,12 @@ module.exports = function (app, db) {
             new sql.Request()
                 .input('userID', sql.Int, req.params.id)
                 .query(
-                    'SELECT DISTINCT a.postID, a.title, a.body_S, a.imageURL, a.lastEditTime, a.nickname, a.tags, \
-                     a.avatarURL, a.likeCount,a.dislikeCount, a.commentCount, a.collectCount, IIF(a.editorID=@userID,1,0) AS isEditor,\
-                     iif(EXISTS(SELECT * WHERE b.user_ID=@userID AND b.post_ID=a.postID),b.isCollected,NULL)AS isCollected,\
-                     iif(EXISTS(SELECT * WHERE b.user_ID=@userID AND b.post_ID=a.postID),b.like_State,NULL)AS like_State\
-                     FROM getPosts AS a LEFT OUTER JOIN postStateList AS b ON a.postID = b.post_ID\
-                     ORDER BY lastEditTime DESC;'
+                    `SELECT DISTINCT a.postID, a.title, a.body_S, a.imageURL, a.lastEditTime, a.nickname, a.tags, 
+                     a.avatarURL, a.likeCount,a.dislikeCount, a.commentCount, a.collectCount, IIF(a.editorID=@userID,1,0) AS isEditor,
+                     iif(EXISTS(SELECT * WHERE b.user_ID=@userID AND b.post_ID=a.postID),b.isCollected,NULL)AS isCollected,
+                     iif(EXISTS(SELECT * WHERE b.user_ID=@userID AND b.post_ID=a.postID),b.like_State,NULL)AS like_State
+                     FROM getPosts AS a LEFT OUTER JOIN postStateList AS b ON a.postID = b.post_ID
+                     ORDER BY lastEditTime DESC;`
                 ).then(function (recordset) {
                     console.dir(recordset);
                     res.json(recordset);
@@ -119,8 +119,8 @@ module.exports = function (app, db) {
             new sql.Request()
                 .input('postID', sql.Int, req.params.id) //SQL注入
                 .query(
-                    'SELECT * FROM [Inforum_Data_Center].[dbo].[getPostDetail]\
-                    WHERE postID = @postID'
+                    `SELECT * FROM [Inforum_Data_Center].[dbo].[getPostDetail]\
+                     WHERE postID = @postID`
                 ).then(function (recordset) {
                     console.dir(recordset);
                     res.json(recordset);
@@ -138,15 +138,15 @@ module.exports = function (app, db) {
                 .input('postID', sql.Int, req.params.id)
                 .input('userID', sql.Int, req.query.userID)
                 .query(
-                    'SELECT [postID],[body],[imageURL],[lastEditTime],[username],[avatarURL],[nickname],[likeCount],\
-                    iif(EXISTS(SELECT * WHERE b.user_ID=@userID AND b.post_ID=a.postID),b.like_State,NULL)AS like_State,\
-                    MAX(b.user_ID) AS user_ID\
-                    FROM [Inforum_Data_Center].[dbo].[getPostComment]as a \
-                    LEFT OUTER JOIN postStateList AS b \
-                    ON a.postID=b.post_ID\
-                    WHERE  a.target_comment_postID = @postID\
-                    GROUP BY [postID],[body],[imageURL],[lastEditTime],[username],[avatarURL],[nickname],[likeCount],like_State,user_ID,post_ID\
-                    ORDER BY lastEditTime DESC'
+                    `SELECT [postID],[body],[imageURL],[lastEditTime],[username],[avatarURL],[nickname],[likeCount],
+                     iif(EXISTS(SELECT * WHERE b.user_ID=@userID AND b.post_ID=a.postID),b.like_State,NULL)AS like_State,
+                     MAX(b.user_ID) AS user_ID
+                     FROM [Inforum_Data_Center].[dbo].[getPostComment]as a 
+                     LEFT OUTER JOIN postStateList AS b 
+                     ON a.postID=b.post_ID
+                     WHERE  a.target_comment_postID = @postID
+                     GROUP BY [postID],[body],[imageURL],[lastEditTime],[username],[avatarURL],[nickname],[likeCount],like_State,user_ID,post_ID
+                     ORDER BY lastEditTime DESC`
                 ).then(function (recordset) {
                     console.dir(recordset);
                     res.json(recordset);
@@ -165,17 +165,17 @@ module.exports = function (app, db) {
                 .input('userID', sql.Int, req.body.userID)
                 .input('postID', sql.Int, req.body.postID)
                 .query(
-                    'DECLARE @likeState int;\
-                     SET @likeState=(SELECT like_State FROM postStateList \
-                             WHERE post_ID=@postID AND user_ID=@userID);\
-                     IF NOT EXISTS(SELECT * FROM postStateList\
-                         WHERE post_ID=@postID AND user_ID=@userID)\
-                             INSERT INTO postStateList(post_ID,user_ID,like_State)\
-                             VALUES(@postID,@userID,1)\
-                     ELSE\
-                         UPDATE postStateList SET \
-                         like_State=IIF(@likeState=0 OR @likeState=2,1,0)\
-                         WHERE post_ID=@postID AND user_ID=@userID;'
+                    `DECLARE @likeState int;
+                     SET @likeState=(SELECT like_State FROM postStateList 
+                             WHERE post_ID=@postID AND user_ID=@userID);
+                     IF NOT EXISTS(SELECT * FROM postStateList
+                         WHERE post_ID=@postID AND user_ID=@userID)
+                             INSERT INTO postStateList(post_ID,user_ID,like_State)
+                             VALUES(@postID,@userID,1)
+                     ELSE
+                         UPDATE postStateList SET 
+                         like_State=IIF(@likeState=0 OR @likeState=2,1,0)
+                         WHERE post_ID=@postID AND user_ID=@userID;`
                 ).then(function (recordset) {
                     myDate = new Date();
                     console.log('post ' + req.body.postID + ' state of user(' + req.body.userID + ') has been updated at ' + myDate.toLocaleTimeString());
@@ -193,17 +193,17 @@ module.exports = function (app, db) {
                 .input('userID', sql.Int, req.body.userID)
                 .input('postID', sql.Int, req.body.postID)
                 .query(
-                    'DECLARE @likeState int;\
-                     SET @likeState=(SELECT like_State FROM postStateList \
-                             WHERE post_ID=@postID AND user_ID=@userID);\
-                     IF NOT EXISTS(SELECT * FROM postStateList\
-                         WHERE post_ID=@postID AND user_ID=@userID)\
-                             INSERT INTO postStateList(post_ID,user_ID,like_State)\
-                             VALUES(@postID,@userID,2)\
+                    `DECLARE @likeState int;
+                     SET @likeState=(SELECT like_State FROM postStateList 
+                             WHERE post_ID=@postID AND user_ID=@userID);
+                     IF NOT EXISTS(SELECT * FROM postStateList
+                         WHERE post_ID=@postID AND user_ID=@userID)
+                             INSERT INTO postStateList(post_ID,user_ID,like_State)
+                             VALUES(@postID,@userID,2)
                      ELSE\
-                         UPDATE postStateList SET \
-                         like_State=IIF(@likeState=0 OR @likeState=1,2,0)\
-                         WHERE post_ID=@postID AND user_ID=@userID;'
+                         UPDATE postStateList SET 
+                         like_State=IIF(@likeState=0 OR @likeState=1,2,0)
+                         WHERE post_ID=@postID AND user_ID=@userID;`
                 ).then(function (recordset) {
                     myDate = new Date();
                     console.log('post ' + req.body.postID + ' state of user(' + req.body.userID + ') has been updated at ' + myDate.toLocaleTimeString());
@@ -221,15 +221,15 @@ module.exports = function (app, db) {
                 .input('userID', sql.Int, req.body.userID)
                 .input('postID', sql.Int, req.body.postID)
                 .query(
-                    'IF NOT EXISTS(SELECT * FROM postStateList\
-                         WHERE post_ID=@postID AND user_ID=@userID)\
-                             INSERT INTO postStateList(post_ID,user_ID,isCollected,collectTime)\
-                             VALUES(@postID,@userID,1,getDate())\
-                     ELSE\
-                         UPDATE postStateList SET \
-                         isCollected=IIF((SELECT isCollected FROM postStateList \
-                            WHERE post_ID=@postID AND user_ID=@userID)=1,0,1)\
-                         WHERE post_ID=@postID AND user_ID=@userID;'
+                    `IF NOT EXISTS(SELECT * FROM postStateList
+                         WHERE post_ID=@postID AND user_ID=@userID)
+                             INSERT INTO postStateList(post_ID,user_ID,isCollected,collectTime)
+                             VALUES(@postID,@userID,1,getDate())
+                     ELSE
+                         UPDATE postStateList SET 
+                         isCollected=IIF((SELECT isCollected FROM postStateList 
+                            WHERE post_ID=@postID AND user_ID=@userID)=1,0,1)
+                         WHERE post_ID=@postID AND user_ID=@userID;`
                 ).then(function (recordset) {
                     myDate = new Date();
                     console.log('post ' + req.body.postID + ' state of user(' + req.body.userID + ') has been updated at ' + myDate.toLocaleTimeString());
@@ -248,8 +248,8 @@ module.exports = function (app, db) {
             new sql.Request()
                 .input('userID', sql.Int, req.params.id)
                 .query(
-                    'SELECT * FROM [Inforum_Data_Center].[dbo].[getProfile]\
-                     WHERE (getProfile.id = @userID)'
+                    `SELECT * FROM [Inforum_Data_Center].[dbo].[getProfile]
+                     WHERE (getProfile.id = @userID)`
                 ).then(function (recordset) {
                     console.dir(recordset); //在终端输出
                     res.json(recordset);
@@ -270,8 +270,8 @@ module.exports = function (app, db) {
                 .input('imgURL', sql.VarChar, req.body.imgURL == 'null' ? null : req.body.imgURL)
                 .input('editorID', sql.Int, req.body.editorID)
                 .query(
-                    'INSERT INTO tbPost (title,body,tags,imageURL,editorID)\
-                     VALUES (@title,@content,@tags,@imgURL,@editorID);'
+                    `INSERT INTO tbPost (title,body,tags,imageURL,editorID)
+                     VALUES (@title,@content,@tags,@imgURL,@editorID);`
                 ).then(function (recordset) {
                     console.dir(recordset); //在终端输出
                     console.log(req.body);
@@ -293,9 +293,9 @@ module.exports = function (app, db) {
                 .input('tags', sql.NVarChar, req.body.tags == 'null' ? null : req.body.tags)
                 .input('imgURL', sql.VarChar, req.body.imgURL == 'null' ? null : req.body.imgURL)
                 .query(
-                    'UPDATE tbPost\
-                     SET title=@title, body=@content, tags=@tags, imageURL=@imgURL, lastEditTime=getDate()\
-                     WHERE postID = @postID;'
+                    `UPDATE tbPost
+                     SET title=@title, body=@content, tags=@tags, imageURL=@imgURL, lastEditTime=getDate()
+                     WHERE postID = @postID;`
                 ).then(function (recordset) {
                     console.dir(recordset); //在终端输出
                     myDate = new Date();
@@ -319,7 +319,7 @@ module.exports = function (app, db) {
                     myDate = new Date();
                     console.log('Post ' + req.body.postID + ' has been deleted at ' + myDate.toLocaleTimeString());
                     res.send('success.');
-                })
+                });
         }).catch(function (err) {
             console.log(err);
             res.send(err);
@@ -333,14 +333,14 @@ module.exports = function (app, db) {
                 .input('userID', sql.Int, req.body.userID)
                 .input('newUserName', sql.VarChar, req.body.newUserName)
                 .query(
-                    'UPDATE tbLogin_userToken SET username = @userName\
-                     WHERE id=@userID'
+                    `UPDATE tbLogin_userToken SET username = @userName
+                     WHERE id=@userID`
                 ).then(function (recordset) {
                     console.dir(recordset); //在终端输出
                     myDate = new Date();
                     console.log('User ' + req.body.userID + 'userName has been changed at' + myDate.toLocaleTimeString());
                     res.send('success.');
-                })
+                });
         }).catch(function (err) {
             console.log(err);
             res.send(err);
