@@ -129,7 +129,7 @@ module.exports = function (app, db) {
             new sql.Request()
                 .input('userID', sql.Int, req.params.id)
                 .query(
-                    `SELECT DISTINCT [postID]
+                    `SELECT [postID]
                      ,[title]
                      ,[body_S]
                      ,[imageURL]
@@ -147,6 +147,7 @@ module.exports = function (app, db) {
                      ,IIF([user_ID]=@userID,[like_State],null)AS like_State
                      ,IIF([user_ID]=@userID,[collectTime],null)AS collectTime
                      FROM [Inforum_Data_Center].[dbo].[getPosts]
+                     WHERE user_ID=@userID OR user_ID IS NULL
                      ORDER BY lastEditTime DESC;`
                 ).then(function (recordset) {
                     console.dir(recordset);
