@@ -106,6 +106,7 @@ module.exports = function (app, db) {
                 ,[dislikeCount]
                 ,[commentCount]
                 ,[collectCount]
+                ,IIF([editorID]=@userID,1,0) AS isEditor
                 ,IIF([user_ID]=@userID,[user_ID],null)AS user_ID
                 ,IIF([user_ID]=@userID,[isCollected],null)AS isCollected
                 ,IIF([user_ID]=@userID,[like_State],null)AS like_State
