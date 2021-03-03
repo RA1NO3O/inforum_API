@@ -90,17 +90,64 @@ module.exports = function (app, db) {
         });
     });
 
+    app.get('/api/getCollection/:id', function (req, res) {
+        sql.connect(config).then(function () {
+            new sql.Request()
+                .input('userID', sql.Int, req.params.id)
+                .query(`SELECT DISTINCT [postID]
+                ,[title]
+                ,[body_S]
+                ,[imageURL]
+                ,[lastEditTime]
+                ,[nickname]
+                ,[tags]
+                ,[avatarURL]
+                ,[likeCount]
+                ,[dislikeCount]
+                ,[commentCount]
+                ,[collectCount]
+                ,[editorID]
+                ,IIF([user_ID]=@userID,[user_ID],null)AS user_ID
+                ,IIF([user_ID]=@userID,[isCollected],null)AS isCollected
+                ,IIF([user_ID]=@userID,[like_State],null)AS like_State
+                ,IIF([user_ID]=@userID,[collectTime],null)AS collectTime
+                FROM [Inforum_Data_Center].[dbo].[getPosts]
+                WHERE isCollected=1 AND user_ID=@userID
+                ORDER BY lastEditTime DESC;`
+                ).then(function (recordset) {
+                    console.dir(recordset);
+                    res.json(recordset);
+                });
+        }).catch(function (err) {
+            console.log(err);
+            res.send(err);
+        });
+    });
+
     //首页帖子流
     app.get('/api/getPosts/:id', function (req, res) {
         sql.connect(config).then(function () {
             new sql.Request()
                 .input('userID', sql.Int, req.params.id)
                 .query(
-                    `SELECT DISTINCT a.postID, a.title, a.body_S, a.imageURL, a.lastEditTime, a.nickname, a.tags, 
-                     a.avatarURL, a.likeCount,a.dislikeCount, a.commentCount, a.collectCount, IIF(a.editorID=@userID,1,0) AS isEditor,
-                     iif(EXISTS(SELECT * WHERE b.user_ID=@userID AND b.post_ID=a.postID),b.isCollected,NULL)AS isCollected,
-                     iif(EXISTS(SELECT * WHERE b.user_ID=@userID AND b.post_ID=a.postID),b.like_State,NULL)AS like_State
-                     FROM getPosts AS a LEFT OUTER JOIN postStateList AS b ON a.postID = b.post_ID
+                    `SELECT DISTINCT [postID]
+                     ,[title]
+                     ,[body_S]
+                     ,[imageURL]
+                     ,[lastEditTime]
+                     ,[nickname]
+                     ,[tags]
+                     ,[avatarURL]
+                     ,[likeCount]
+                     ,[dislikeCount]
+                     ,[commentCount]
+                     ,[collectCount]
+                     ,[editorID]
+                     ,IIF([user_ID]=@userID,[user_ID],null)AS user_ID
+                     ,IIF([user_ID]=@userID,[isCollected],null)AS isCollected
+                     ,IIF([user_ID]=@userID,[like_State],null)AS like_State
+                     ,IIF([user_ID]=@userID,[collectTime],null)AS collectTime
+                     FROM [Inforum_Data_Center].[dbo].[getPosts]
                      ORDER BY lastEditTime DESC;`
                 ).then(function (recordset) {
                     console.dir(recordset);
