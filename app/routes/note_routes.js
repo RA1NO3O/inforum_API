@@ -281,6 +281,7 @@ module.exports = function (app, db) {
                          UPDATE postStateList SET 
                          isCollected=IIF((SELECT isCollected FROM postStateList 
                             WHERE post_ID=@postID AND user_ID=@userID)=1,0,1)
+                         ,collectTime=getDate()
                          WHERE post_ID=@postID AND user_ID=@userID;`
                 ).then(function (recordset) {
                     res.send('success.');
