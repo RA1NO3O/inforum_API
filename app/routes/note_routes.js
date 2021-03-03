@@ -112,7 +112,7 @@ module.exports = function (app, db) {
                 ,IIF([user_ID]=@userID,[collectTime],null)AS collectTime
                 FROM [Inforum_Data_Center].[dbo].[getPosts]
                 WHERE isCollected=1 AND user_ID=@userID
-                ORDER BY lastEditTime DESC;`
+                ORDER BY collectTime DESC;`
                 ).then(function (recordset) {
                     console.dir(recordset);
                     res.json(recordset);
