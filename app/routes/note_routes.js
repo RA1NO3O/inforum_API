@@ -186,14 +186,20 @@ module.exports = function (app, db) {
                 .input('postID', sql.Int, req.params.id)
                 .input('userID', sql.Int, req.query.userID)
                 .query(
-                    `SELECT [postID],[body],[imageURL],[lastEditTime],[username],[avatarURL],[nickname],[likeCount],
-                     iif(EXISTS(SELECT * WHERE b.user_ID=@userID AND b.post_ID=a.postID),b.like_State,NULL)AS like_State,
-                     MAX(b.user_ID) AS user_ID
-                     FROM [Inforum_Data_Center].[dbo].[getPostComment]as a 
-                     LEFT OUTER JOIN postStateList AS b 
-                     ON a.postID=b.post_ID
-                     WHERE  a.target_comment_postID = @postID
-                     GROUP BY [postID],[body],[imageURL],[lastEditTime],[username],[avatarURL],[nickname],[likeCount],like_State,user_ID,post_ID
+                    `SELECT TOP (1000) [postID]
+                     ,[body]
+                     ,[imageURL]
+                     ,[lastEditTime]
+                     ,[username]
+                     ,[avatarURL]
+                     ,[nickname]
+                     ,[target_comment_postID]
+                     ,[likeCount]
+                     ,IIF([user_ID]=@userID,[like_State],null)AS like_State
+                     ,IIF([user_ID]=@userID,[user_ID],null)AS user_ID
+                     ,IIF([editorID]=@userID,1,0) AS isEditor
+                     FROM [Inforum_Data_Center].[dbo].[getPostComment]
+                     WHERE user_ID=@userID OR user_ID IS NULL
                      ORDER BY lastEditTime DESC`
                 ).then(function (recordset) {
                     console.dir(recordset);
