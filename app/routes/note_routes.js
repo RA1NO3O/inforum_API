@@ -130,26 +130,19 @@ module.exports = function (app, db) {
             new sql.Request()
                 .input('userID', sql.Int, req.params.id)
                 .query(
-                    `SELECT [postID]
-                     ,[title]
-                     ,[body_S]
-                     ,[imageURL]
-                     ,[lastEditTime]
-                     ,[nickname]
-                     ,[tags]
-                     ,[avatarURL]
-                     ,[likeCount]
-                     ,[dislikeCount]
-                     ,[commentCount]
-                     ,[collectCount]
-                     ,IIF([editorID]=@userID,1,0) AS isEditor
-                     ,IIF([user_ID]=@userID,[user_ID],null)AS user_ID
-                     ,IIF([user_ID]=@userID,[isCollected],null)AS isCollected
-                     ,IIF([user_ID]=@userID,[like_State],null)AS like_State
-                     ,IIF([user_ID]=@userID,[collectTime],null)AS collectTime
-                     FROM [Inforum_Data_Center].[dbo].[getPosts]
-                     WHERE user_ID=@userID OR user_ID IS NULL
-                     ORDER BY lastEditTime DESC;`
+                    `SELECT [postID],[title],[body_S],[imageURL],[lastEditTime],
+                        [nickname],[tags],[avatarURL],[likeCount],[dislikeCount],
+                        [commentCount],[collectCount]
+                        ,IIF([editorID]=@userID,1,0) AS isEditor
+                        ,IIF([user_ID]=@userID,[user_ID],NULL)AS userID
+                        ,IIF([user_ID]=@userID,[isCollected],NULL)AS isCollected
+                        ,IIF([user_ID]=@userID,[like_State],NULL)AS like_State
+                        ,IIF([user_ID]=@userID,[collectTime],NULL)AS collectTime
+                        INTO #TEMP FROM [Inforum_Data_Center].[dbo].[getPosts]
+                     SELECT DISTINCT * FROM #TEMP 
+                     WHERE [userID]=@userID OR [userID] IS NULL
+                     ORDER BY lastEditTime DESC;
+                     DROP TABLE #TEMP; `
                 ).then(function (recordset) {
                     console.dir(recordset);
                     res.json(recordset);
