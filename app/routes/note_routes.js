@@ -40,7 +40,7 @@ module.exports = function (app, db) {
                 });
         }).catch(function (err) {
             console.log(err);
-            res.send('error');
+            res.status(500).send(err);
         });
     });
     //登录
@@ -59,7 +59,7 @@ module.exports = function (app, db) {
                 });
         }).catch(function (err) {
             console.log(err);
-            res.send(err);
+            res.status(500).send(err);
         });
     });
 
@@ -86,7 +86,7 @@ module.exports = function (app, db) {
                 });
         }).catch(function (err) {
             console.log(err);
-            res.send(err);
+            res.status(500).send(err);
         });
     });
 
@@ -94,19 +94,10 @@ module.exports = function (app, db) {
         sql.connect(config).then(function () {
             new sql.Request()
                 .input('userID', sql.Int, req.params.id)
-                .query(`SELECT DISTINCT [postID]
-                ,[title]
-                ,[body_S]
-                ,[imageURL]
-                ,[lastEditTime]
-                ,[nickname]
-                ,[tags]
-                ,[avatarURL]
-                ,[likeCount]
-                ,[dislikeCount]
-                ,[commentCount]
-                ,[collectCount]
-                ,IIF([editorID]=@userID,1,0) AS isEditor
+                .query(`SELECT DISTINCT [postID],[title],[body_S]
+                ,[imageURL],[lastEditTime],[nickname],[tags],[avatarURL]
+                ,[likeCount],[dislikeCount],[commentCount],[collectCount]
+                ,[editorID],IIF([editorID]=@userID,1,0) AS isEditor
                 ,IIF([user_ID]=@userID,[user_ID],null)AS user_ID
                 ,IIF([user_ID]=@userID,[isCollected],null)AS isCollected
                 ,IIF([user_ID]=@userID,[like_State],null)AS like_State
@@ -120,7 +111,7 @@ module.exports = function (app, db) {
                 });
         }).catch(function (err) {
             console.log(err);
-            res.send(err);
+            res.status(500).send(err);
         });
     });
 
@@ -150,7 +141,7 @@ module.exports = function (app, db) {
                 });
         }).catch(function (err) {
             console.log(err);
-            res.send(err);
+            res.status(500).send(err);
         });
     });
 
@@ -168,7 +159,7 @@ module.exports = function (app, db) {
                 });
         }).catch(function (err) {
             console.log(err);
-            res.send(err);
+            res.status(500).send(err);
         });
     });
 
@@ -179,15 +170,8 @@ module.exports = function (app, db) {
                 .input('postID', sql.Int, req.params.id)
                 .input('userID', sql.Int, req.query.userID)
                 .query(
-                    `SELECT TOP (1000) [postID]
-                     ,[body]
-                     ,[imageURL]
-                     ,[lastEditTime]
-                     ,[username]
-                     ,[avatarURL]
-                     ,[nickname]
-                     ,[target_comment_postID]
-                     ,[likeCount]
+                    `SELECT TOP (1000) [postID],[body],[imageURL],[lastEditTime],[username]
+                     ,[avatarURL],[nickname],[target_comment_postID],[likeCount],[editorID]
                      ,IIF([user_ID]=@userID,[like_State],null)AS like_State
                      ,IIF([user_ID]=@userID,[user_ID],null)AS user_ID
                      ,IIF([editorID]=@userID,1,0) AS isEditor
@@ -200,7 +184,7 @@ module.exports = function (app, db) {
                 });
         }).catch(function (err) {
             console.dir(err);
-            res.send(err);
+            res.status(500).send(err);
 
         });
     });
@@ -232,7 +216,7 @@ module.exports = function (app, db) {
                 });
         }).catch(function (err) {
             console.log(err);
-            res.send(err);
+            res.status(500).send(err);
         });
     });
     //踩👎
@@ -262,7 +246,7 @@ module.exports = function (app, db) {
                 });
         }).catch(function (err) {
             console.log(err);
-            res.send(err);
+            res.status(500).send(err);
         });
     });
     //收藏⭐
@@ -291,7 +275,7 @@ module.exports = function (app, db) {
                 });
         }).catch(function (err) {
             console.log(err);
-            res.send(err);
+            res.status(500).send(err);
         });
     });
 
@@ -310,7 +294,7 @@ module.exports = function (app, db) {
                 });
         }).catch(function (err) {
             console.log(err);
-            res.send(err);
+            res.status(500).send(err);
         });
     });
 
@@ -333,7 +317,7 @@ module.exports = function (app, db) {
                 });
         }).catch(function (err) {
             console.log(err);
-            res.send(err);
+            res.status(500).send(err);
         });
     });
 
@@ -355,7 +339,7 @@ module.exports = function (app, db) {
                 });
         }).catch(function (err) {
             console.log(err);
-            res.send(err);
+            res.status(500).send(err);
         });
     });
 
@@ -380,7 +364,7 @@ module.exports = function (app, db) {
                 });
         }).catch(function (err) {
             console.log(err);
-            res.send(err);
+            res.status(500).send(err);
         });
     });
 
@@ -398,31 +382,10 @@ module.exports = function (app, db) {
                 });
         }).catch(function (err) {
             console.log(err);
-            res.send(err);
+            res.status(500).send(err);
         });
     });
 
-    //修改用户名
-    app.post('/api/editUserName/', function (req, res) {
-        sql.connect(config).then(function () {
-            new sql.Request()
-                .input('userID', sql.Int, req.body.userID)
-                .input('newUserName', sql.VarChar, req.body.newUserName)
-                .query(
-                    `UPDATE tbLogin_userToken SET username = @userName
-                     WHERE id=@userID`
-                ).then(function (recordset) {
-                    res.send('success.');
-                    console.dir(recordset); //在终端输出
-                    myDate = new Date();
-                    console.log('User ' + req.body.userID + 'userName has been changed at' + myDate.toLocaleTimeString());
-
-                });
-        }).catch(function (err) {
-            console.log(err);
-            res.send(err);
-        });
-    });
 
     //删除账户
     app.delete('/api/deleteUser/', function (req, res) {
@@ -439,7 +402,32 @@ module.exports = function (app, db) {
                 });
         }).catch(function (err) {
             console.log(err);
-            res.send(err);
+            res.status(500).send(err);
+        });
+    });
+
+    //模糊查询
+    app.get('/api/fuzzySearch/', function (req, res) {
+        sql.connect(config).then(function () {
+            new sql.Request()
+                .input('query', sql.NVarChar, req.query.query)
+                .query(`SELECT * FROM getPosts WHERE title LIKE '%'+@query+'%' 
+                        OR body_S LIKE '%'+@query+'%'
+                        OR tags LIKE '%'+@query+'%'`
+                ).then(function (recordset) {
+                    // console.dir(recordset);
+                });
+            new sql.Request()
+                .input('query', sql.NVarChar, req.query.query)
+                .query(`SELECT * FROM getProfile 
+                        WHERE nickname LIKE '%'+@query+'%'
+                        OR username LIKE '%'+@query+'%'`
+                ).then(function (recordset) {
+                    // console.dir(recordset);
+                });
+        }).catch(function (err) {
+            console.log(err);
+            res.status(500).send(err);
         });
     });
 
