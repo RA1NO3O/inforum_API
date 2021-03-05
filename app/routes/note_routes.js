@@ -3,10 +3,12 @@ const sql = require('mssql');
 
 module.exports = function (app, db) {
     var myDate, startDate = new Date();
+
     app.all('*',function (req, res,next){
         res.setHeader('Access-Control-Allow-Origin','*');
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
         res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Authorization');
+        res.setHeader("Content-Type", "application/json;charset=utf-8");
         next();
     });
     //基础响应
