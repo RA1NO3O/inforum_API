@@ -2,13 +2,13 @@ const config = require('../../config/db');  //请配置好对应的变量.
 const sql = require('mssql');
 
 module.exports = function (app, db) {
-    var bodyParser = require('body-parser');
     var myDate, startDate = new Date();
-    app.use(bodyParser.json({ limit: '1mb' }));
-    app.use(bodyParser.urlencoded({
-        extended: true
-    }));
-
+    app.all('*',function (req, res,next){
+        res.setHeader('Access-Control-Allow-Origin','*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
+        res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Authorization');
+        next();
+    });
     //基础响应
     app.get('/', function (req, res) {
         myDate = new Date();
