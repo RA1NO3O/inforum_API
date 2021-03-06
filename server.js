@@ -16,8 +16,8 @@ router.listen(port, () => {
   console.log('app listening on http://localhost:' + port);
 });
 
-// router.use(bodyParser.json());
-// router.use(bodyParser.urlencoded({ extended: false }));
+router.use(bodyParser.json());
+router.use(bodyParser.urlencoded({ extended: false }));
 router.all('*', function (req, res, next) {
   // console.log(req.headers.origin);
   // console.log(req.environ);
