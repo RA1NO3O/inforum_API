@@ -78,7 +78,8 @@ module.exports = {
                              ,IIF([user_ID]=@userID,[collectTime],NULL)AS collectTime
                              INTO #TEMP FROM [Inforum_Data_Center].[dbo].[getPosts]
                          SELECT DISTINCT * FROM #TEMP 
-                         WHERE [userID]=@userID OR [userID] IS NULL;`
+                         WHERE [userID]=@userID OR [userID] IS NULL;
+                         ORDER BY lastEditTime DESC`
                     ).then((recordset) => {
                         back(recordset);
                     }).catch((err) => {
