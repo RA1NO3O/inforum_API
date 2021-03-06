@@ -152,17 +152,18 @@ module.exports = {
             await sql.connect(config).then(async () => {
                 await new sql.Request()
                     .input('userID', sql.Int, req.params.id)
+                    .input('currentUserID',sql.Int,req.query.currentUserID)
                     .query(`SELECT DISTINCT [postID],[title],[body_S]
                             ,[imageURL],[lastEditTime],[nickname],[tags],[avatarURL]
                             ,[likeCount],[dislikeCount],[commentCount],[collectCount]
                             ,[editorID],IIF([editorID]=@userID,1,0) AS isEditor
-                            ,IIF([user_ID]=@userID,[user_ID],null)AS user_ID
-                            ,IIF([user_ID]=@userID,[isCollected],null)AS isCollected
-                            ,IIF([user_ID]=@userID,[like_State],null)AS like_State
-                            ,IIF([user_ID]=@userID,[collectTime],null)AS collectTime
+                            ,IIF([user_ID]=@targetUserID,[user_ID],null)AS user_ID
+                            ,IIF([user_ID]=@targetUserID,[isCollected],null)AS isCollected
+                            ,IIF([user_ID]=@targetUserID,[like_State],null)AS like_State
+                            ,IIF([user_ID]=@targetUserID,[collectTime],null)AS collectTime
                             FROM [Inforum_Data_Center].[dbo].[getPosts]
-                            WHERE (user_ID=@userID OR user_ID IS NULL) AND editorID=@userID 
-                            ORDER BY collectTime DESC;`
+                            WHERE (user_ID=@currentUserID OR user_ID IS NULL) AND editorID=@userID
+                            ORDER BY lastEditTime DESC;`
                     ).then((recordset) => {
                         back(recordset);
                     }).catch((err) => {
@@ -177,17 +178,18 @@ module.exports = {
             await sql.connect(config).then(async () => {
                 await new sql.Request()
                     .input('userID', sql.Int, req.params.id)
+                    .input('currentUserID',sql.Int,req.query.currentUserID)
                     .query(`SELECT DISTINCT [postID],[title],[body_S]
                             ,[imageURL],[lastEditTime],[nickname],[tags],[avatarURL]
                             ,[likeCount],[dislikeCount],[commentCount],[collectCount]
                             ,[editorID],IIF([editorID]=@userID,1,0) AS isEditor
-                            ,IIF([user_ID]=@userID,[user_ID],null)AS user_ID
-                            ,IIF([user_ID]=@userID,[isCollected],null)AS isCollected
-                            ,IIF([user_ID]=@userID,[like_State],null)AS like_State
-                            ,IIF([user_ID]=@userID,[collectTime],null)AS collectTime
+                            ,IIF([user_ID]=@targetUserID,[user_ID],null)AS user_ID
+                            ,IIF([user_ID]=@targetUserID,[isCollected],null)AS isCollected
+                            ,IIF([user_ID]=@targetUserID,[like_State],null)AS like_State
+                            ,IIF([user_ID]=@targetUserID,[collectTime],null)AS collectTime
                             FROM [Inforum_Data_Center].[dbo].[getPosts]
-                            WHERE (user_ID=@userID OR user_ID IS NULL) AND imageURL IS NOT NULL AND editorID=@userID
-                            ORDER BY collectTime DESC;`
+                            WHERE (user_ID=@currentUserID OR user_ID IS NULL) AND imageURL IS NOT NULL AND editorID=@userID
+                            ORDER BY lastEditTime DESC;`
                     ).then((recordset) => {
                         back(recordset);
                     }).catch((err) => {
@@ -202,6 +204,7 @@ module.exports = {
             await sql.connect(config).then(async () => {
                 await new sql.Request()
                     .input('userID', sql.Int, req.params.id)
+                    .input('currentUserID',sql.Int,req.query.currentUserID)
                     .query(`SELECT DISTINCT [postID],[title],[body_S]
                             ,[imageURL],[lastEditTime],[nickname],[tags],[avatarURL]
                             ,[likeCount],[dislikeCount],[commentCount],[collectCount]
@@ -211,8 +214,8 @@ module.exports = {
                             ,IIF([user_ID]=@userID,[like_State],null)AS like_State
                             ,IIF([user_ID]=@userID,[collectTime],null)AS collectTime
                             FROM [Inforum_Data_Center].[dbo].[getPosts]
-                            WHERE like_State=1 AND (user_ID=@userID OR user_ID IS NULL)
-                            ORDER BY collectTime DESC;`
+                            WHERE like_State=1 AND user_ID=@userID OR user_ID IS NULL
+                            ORDER BY lastEditTime DESC;`
                     ).then((recordset) => {
                         back(recordset);
                     }).catch((err) => {
