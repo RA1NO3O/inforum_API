@@ -69,16 +69,16 @@ module.exports = {
                     .input('userID', sql.Int, req.params.id)
                     .query(
                         `SELECT [postID],[title],[body_S],[imageURL],[lastEditTime],
-                        [nickname],[tags],[avatarURL],[likeCount],[dislikeCount],
-                        [commentCount],[collectCount]
-                        ,IIF([editorID]=@userID,1,0) AS isEditor
-                        ,IIF([user_ID]=@userID,[user_ID],NULL)AS userID
-                        ,IIF([user_ID]=@userID,[isCollected],NULL)AS isCollected
-                        ,IIF([user_ID]=@userID,[like_State],NULL)AS like_State
-                        ,IIF([user_ID]=@userID,[collectTime],NULL)AS collectTime
-                     FROM [Inforum_Data_Center].[dbo].[getPosts]
-                     WHERE [userID]=@userID OR [userID] IS NULL
-                     ORDER BY lastEditTime DESC;`
+                             [nickname],[tags],[avatarURL],[likeCount],[dislikeCount],
+                             [commentCount],[collectCount]
+                             ,IIF([editorID]=@userID,1,0) AS isEditor
+                             ,IIF([user_ID]=@userID,[user_ID],NULL)AS userID
+                             ,IIF([user_ID]=@userID,[isCollected],NULL)AS isCollected
+                             ,IIF([user_ID]=@userID,[like_State],NULL)AS like_State
+                             ,IIF([user_ID]=@userID,[collectTime],NULL)AS collectTime
+                             INTO #TEMP FROM [Inforum_Data_Center].[dbo].[getPosts]
+                         SELECT DISTINCT * FROM #TEMP 
+                         WHERE [userID]=@userID OR [userID] IS NULL;`
                     ).then((recordset) => {
                         back(recordset);
                     }).catch((err) => {
