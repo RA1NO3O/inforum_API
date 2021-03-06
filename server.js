@@ -31,7 +31,7 @@ router.all('*', function (req, res, next) {
 
 //基础响应
 router.get('/', function (req, res) {
-  myDate = new Date();
+  var myDate = new Date();
   res.send('Inforum Web API V1.0<br/>' + myDate.toLocaleTimeString() + '<br/>Service started at ' + startDate.toLocaleTimeString());
 });
 router.get('/whoRyou/', function (req, res) {
