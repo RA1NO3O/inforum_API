@@ -50,6 +50,26 @@ server.get('/api/getProfile/:id', async (req, res)=> {
     res.json(r);
 });
 
+//获取用户发的帖子和回复
+server.get('/api/getPostsByUser/:id',async (req, res)=>{
+    let r = await sqlQuery.getPostsByUser(req);
+    console.dir(r);
+    res.json(r);
+});
+
+//获取用户发布的照片
+server.get('/api/getGalleryByUser/:id',async (req, res)=>{
+    let r = await sqlQuery.getGalleryByUser(req);
+    console.dir(r);
+    res.json(r);
+});
+//获取用户点赞的帖子
+server.get('/api/getLikedPosts/:id',async (req, res)=>{
+    let r = await sqlQuery.getLikedPosts(req);
+    console.dir(r);
+    res.json(r);
+});
+
 //模糊查询
 server.get('/api/fuzzySearch/', async (req, res) => {
     let postResult = await sqlQuery.postFuzzySearch(req);

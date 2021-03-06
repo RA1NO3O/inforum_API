@@ -147,6 +147,81 @@ module.exports = {
             });
         });
     },
+    getPostsByUser: function (req) {
+        return new Promise(async (back) => {
+            await sql.connect(config).then(async () => {
+                await new sql.Request()
+                    .input('userID', sql.Int, req.params.id)
+                    .query(`SELECT DISTINCT [postID],[title],[body_S]
+                            ,[imageURL],[lastEditTime],[nickname],[tags],[avatarURL]
+                            ,[likeCount],[dislikeCount],[commentCount],[collectCount]
+                            ,[editorID],IIF([editorID]=@userID,1,0) AS isEditor
+                            ,IIF([user_ID]=@userID,[user_ID],null)AS user_ID
+                            ,IIF([user_ID]=@userID,[isCollected],null)AS isCollected
+                            ,IIF([user_ID]=@userID,[like_State],null)AS like_State
+                            ,IIF([user_ID]=@userID,[collectTime],null)AS collectTime
+                            FROM [Inforum_Data_Center].[dbo].[getPosts]
+                            WHERE user_ID=@userID
+                            ORDER BY collectTime DESC;`
+                    ).then((recordset) => {
+                        back(recordset);
+                    }).catch((err) => {
+                        console.log(err);
+                        back(null);
+                    });
+            });
+        });
+    },
+    getGalleryByUser: function (req) {
+        return new Promise(async (back) => {
+            await sql.connect(config).then(async () => {
+                await new sql.Request()
+                    .input('userID', sql.Int, req.params.id)
+                    .query(`SELECT DISTINCT [postID],[title],[body_S]
+                            ,[imageURL],[lastEditTime],[nickname],[tags],[avatarURL]
+                            ,[likeCount],[dislikeCount],[commentCount],[collectCount]
+                            ,[editorID],IIF([editorID]=@userID,1,0) AS isEditor
+                            ,IIF([user_ID]=@userID,[user_ID],null)AS user_ID
+                            ,IIF([user_ID]=@userID,[isCollected],null)AS isCollected
+                            ,IIF([user_ID]=@userID,[like_State],null)AS like_State
+                            ,IIF([user_ID]=@userID,[collectTime],null)AS collectTime
+                            FROM [Inforum_Data_Center].[dbo].[getPosts]
+                            WHERE imageURL IS NOT NULL AND user_ID=@userID
+                            ORDER BY collectTime DESC;`
+                    ).then((recordset) => {
+                        back(recordset);
+                    }).catch((err) => {
+                        console.log(err);
+                        back(null);
+                    });
+            });
+        });
+    },
+    getLikedPosts: function (req) {
+        return new Promise(async (back) => {
+            await sql.connect(config).then(async () => {
+                await new sql.Request()
+                    .input('userID', sql.Int, req.params.id)
+                    .query(`SELECT DISTINCT [postID],[title],[body_S]
+                            ,[imageURL],[lastEditTime],[nickname],[tags],[avatarURL]
+                            ,[likeCount],[dislikeCount],[commentCount],[collectCount]
+                            ,[editorID],IIF([editorID]=@userID,1,0) AS isEditor
+                            ,IIF([user_ID]=@userID,[user_ID],null)AS user_ID
+                            ,IIF([user_ID]=@userID,[isCollected],null)AS isCollected
+                            ,IIF([user_ID]=@userID,[like_State],null)AS like_State
+                            ,IIF([user_ID]=@userID,[collectTime],null)AS collectTime
+                            FROM [Inforum_Data_Center].[dbo].[getPosts]
+                            WHERE like_State=1 AND user_ID=@userID
+                            ORDER BY collectTime DESC;`
+                    ).then((recordset) => {
+                        back(recordset);
+                    }).catch((err) => {
+                        console.log(err);
+                        back(null);
+                    });
+            });
+        });
+    },
     postFuzzySearch: function (req) {
         return new Promise(async (back) => {
             await sql.connect(config).then(async () => {
