@@ -17,7 +17,7 @@ server.post('/api/newPost/', async (req, res) => {
     let r = await sqlInsert.newPost(req);
     console.log('A new post has been created at ' + myDate.toLocaleTimeString());
     console.dir(r);
-    res.send(r != null ? 'success' : 'error.');
+    res.send(r != null ? 'success.' : 'error.');
 });
 
 //新建回复
@@ -25,7 +25,7 @@ server.post('/api/newComment/', async (req, res) => {
     let r = await sqlQuery.newComment(req);
     console.log('A new comment has been created at ' + myDate.toLocaleTimeString());
     console.dir(r);
-    res.send(r != null ? 'success' : 'error.');
+    res.send(r != null ? 'success.' : 'error.');
 });
 
 module.exports = server;
