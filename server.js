@@ -19,8 +19,8 @@ router.listen(port, () => {
 // router.use(bodyParser.json());
 // router.use(bodyParser.urlencoded({ extended: false }));
 router.all('*', function (req, res, next) {
-  console.log(req.headers.origin);
-  console.log(req.environ);
+  // console.log(req.headers.origin);
+  // console.log(req.environ);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
   res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Authorization');
