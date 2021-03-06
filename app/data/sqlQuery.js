@@ -161,7 +161,7 @@ module.exports = {
                             ,IIF([user_ID]=@userID,[like_State],null)AS like_State
                             ,IIF([user_ID]=@userID,[collectTime],null)AS collectTime
                             FROM [Inforum_Data_Center].[dbo].[getPosts]
-                            WHERE user_ID=@userID
+                            WHERE (user_ID=@userID OR user_ID IS NULL) AND editorID=@userID 
                             ORDER BY collectTime DESC;`
                     ).then((recordset) => {
                         back(recordset);
@@ -186,7 +186,7 @@ module.exports = {
                             ,IIF([user_ID]=@userID,[like_State],null)AS like_State
                             ,IIF([user_ID]=@userID,[collectTime],null)AS collectTime
                             FROM [Inforum_Data_Center].[dbo].[getPosts]
-                            WHERE imageURL IS NOT NULL AND user_ID=@userID
+                            WHERE (user_ID=@userID OR user_ID IS NULL) AND imageURL IS NOT NULL AND editorID=@userID
                             ORDER BY collectTime DESC;`
                     ).then((recordset) => {
                         back(recordset);
@@ -211,7 +211,7 @@ module.exports = {
                             ,IIF([user_ID]=@userID,[like_State],null)AS like_State
                             ,IIF([user_ID]=@userID,[collectTime],null)AS collectTime
                             FROM [Inforum_Data_Center].[dbo].[getPosts]
-                            WHERE like_State=1 AND user_ID=@userID
+                            WHERE like_State=1 AND (user_ID=@userID OR user_ID IS NULL)
                             ORDER BY collectTime DESC;`
                     ).then((recordset) => {
                         back(recordset);
