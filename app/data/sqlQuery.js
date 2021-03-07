@@ -199,7 +199,7 @@ module.exports = {
             });
         });
     },
-    getLikedPosts: function (req) {
+    getLikedPostsByUser: function (req) {
         return new Promise(async (back) => {
             await sql.connect(config).then(async () => {
                 await new sql.Request()
@@ -214,7 +214,9 @@ module.exports = {
                             ,IIF([user_ID]=@currentUserID,[like_State],null)AS like_State
                             ,IIF([user_ID]=@currentUserID,[collectTime],null)AS collectTime
                             FROM [Inforum_Data_Center].[dbo].[getPosts]
-                            WHERE like_State=1 AND user_ID=@userID OR user_ID IS NULL
+                            WHERE postID in (
+                                SELECT postID FROM getPosts WHERE user_ID=@userID AND like_State=1
+                            ) AND user_ID=@userID OR user_ID IS NULL
                             ORDER BY lastEditTime DESC;`
                     ).then((recordset) => {
                         back(recordset);
