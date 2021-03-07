@@ -65,7 +65,7 @@ server.get('/api/getGalleryByUser/:id',async (req, res)=>{
 });
 //获取用户点赞的帖子
 server.get('/api/getLikedPostsByUser/:id',async (req, res)=>{
-    let r = await sqlQuery.getLikedPosts(req);
+    let r = await sqlQuery.getLikedPostsByUser(req);
     console.dir(r);
     res.json(r);
 });
