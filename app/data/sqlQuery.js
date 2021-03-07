@@ -216,7 +216,7 @@ module.exports = {
                             FROM [Inforum_Data_Center].[dbo].[getPosts]
                             WHERE postID in (
                                 SELECT postID FROM getPosts WHERE user_ID=@userID AND like_State=1
-                            ) AND user_ID=@currentUserID OR user_ID IS NULL
+                            ) AND user_ID=@currentUserID
                             ORDER BY lastEditTime DESC;`
                     ).then((recordset) => {
                         back(recordset);
