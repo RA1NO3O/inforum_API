@@ -188,7 +188,7 @@ module.exports = {
                             ,IIF([user_ID]=@currentUserID,[like_State],null)AS like_State
                             ,IIF([user_ID]=@currentUserID,[collectTime],null)AS collectTime
                             FROM [Inforum_Data_Center].[dbo].[getPosts]
-                            WHERE (user_ID=@currentUserID OR user_ID IS NULL) AND imageURL IS NOT NULL AND editorID=@userID
+                            WHERE imageURL IS NOT NULL AND editorID=@userID
                             ORDER BY lastEditTime DESC;`
                     ).then((recordset) => {
                         back(recordset);
