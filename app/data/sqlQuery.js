@@ -70,7 +70,7 @@ module.exports = {
                     .query(
                         `SELECT [postID],[title],[body_S],[imageURL],[lastEditTime],
                              [nickname],[tags],[avatarURL],[likeCount],[dislikeCount],
-                             [commentCount],[collectCount]
+                             [editorID],[commentCount],[collectCount]
                              ,IIF([editorID]=@userID,1,0) AS isEditor
                              ,IIF([user_ID]=@userID,[user_ID],NULL)AS userID
                              ,IIF([user_ID]=@userID,[isCollected],NULL)AS isCollected
