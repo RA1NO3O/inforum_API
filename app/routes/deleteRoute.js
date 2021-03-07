@@ -7,10 +7,11 @@ var myDate;
 server.delete('/api/deletePost/', async (req, res) => {
     let r = await sqlDelete.deletePost(req);
     if (r != null) {
+        myDate = new Date();
         console.log('Post ' + req.body.postID + ' has been deleted at ' + myDate.toLocaleTimeString());
         res.send('success.');
     } else {
-        res.status(500).send('error.');
+        res.status(400).send('error.');
     }
 });
 
@@ -18,10 +19,11 @@ server.delete('/api/deletePost/', async (req, res) => {
 server.delete('/api/deleteUser/', async (req, res) => {
     let r = await sqlDelete.deleteUser(req);
     if (r != null) {
+        myDate = new Date();
         console.log('User ' + req.body.userID + ' has been deleted at ' + myDate.toLocaleTimeString());
         res.send('success.');
     } else {
-        res.status(500).send('error.');
+        res.status(400).send('error.');
     }
 });
 
