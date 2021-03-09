@@ -14,5 +14,5 @@ module.exports = {
     }
 };
 ```
-> You know what to do.
+> You know how to do.
 - execute `npm run dev` or `pm2 start .\server.js --watch -i max` then you're good to go.
