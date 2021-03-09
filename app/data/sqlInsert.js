@@ -10,11 +10,6 @@ module.exports = {
                     .input('password', sql.VarChar, req.body.password)
                     .input('email', sql.VarChar, req.body.email == 'null' ? null : req.body.email)
                     .input('phone', sql.VarChar, req.body.phone == 'null' ? null : req.body.phone)
-                    // .input('nickname', sql.NVarChar, req.body.nickname)
-                    // .input('birthday', sql.Date, req.body.birthday)
-                    // .input('bio', sql.NVarChar, req.body.bio)
-                    // .input('gender', sql.NVarChar, req.body.gender)
-                    // .input('location', sql.NVarChar, req.body.location)
                     .query(
                         `insert into dbo.tbLogin_userToken(username,password,email,phone)
                             VALUES (@username, @password, @email, @phone);`)

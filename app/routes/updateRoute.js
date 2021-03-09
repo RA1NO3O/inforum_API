@@ -12,6 +12,13 @@ server.post('/api/editPost/', async (req, res) => {
     res.send(r != null ? 'success.' : 'error.');
 });
 
+server.post('/api/editProfile/',async (req, res) => {
+    myDate = new Date();
+    let r = await sqlUpdate.editProfile(req);
+    console.log('User profile '+req.query.userID+' has been edited at ' + myDate.toLocaleTimeString());
+    res.send(r != null ? 'success.' : 'error.');
+});
+
 //点赞👍
 server.post('/api/thumbUp/', async (req, res) => {
     let r = await sqlUpdate.thumbUp(req);
