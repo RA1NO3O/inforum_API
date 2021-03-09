@@ -29,11 +29,11 @@ module.exports = {
             await sql.connect(config).then(async () => {
                 await new sql.Request()
                     .input('userID', sql.Int, req.query.userID)
-                    .input('avatarURL', sql.Int, req.body.avatarURL == 'null' ? null : req.body.avatarURL)
+                    .input('avatarURL', sql.NVarChar, req.body.avatarURL == 'null' ? null : req.body.avatarURL)
                     .input('bannerURL', sql.NVarChar, req.body.bannerURL == 'null' ? null : req.body.bannerURL)
                     .input('nickName', sql.NVarChar, req.body.nickName == 'null' ? null : req.body.nickName)
                     .input('bio', sql.NVarChar, req.body.bio == 'null' ? null : req.body.bio)
-                    .input('location', sql.VarChar, req.body.location == 'null' ? null : req.body.location)
+                    .input('location', sql.NVarChar, req.body.location == 'null' ? null : req.body.location)
                     .input('birthday', sql.Date, req.body.birthday == 'null' ? null : req.body.birthday)
                     .query(
                         `IF NOT EXISTS (SELECT * FROM tbInfo_user WHERE id = @userID)
