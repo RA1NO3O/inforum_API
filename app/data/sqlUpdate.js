@@ -132,5 +132,22 @@ module.exports = {
                     });
             });
         });
+    },
+    editUserName: function (req) {
+        return new Promise(async (back) => {
+            await sql.connect(config).then(async () => {
+                await new sql.Request()
+                    .input('userID', sql.Int, req.body.userID)
+                    .input('userName', sql.VarChar, req.body.userName)
+                    .query(
+                        `UPDATE tbLogin_userToken SET username=@userName WHERE id=@userID;`)
+                    .then((recordset) => {
+                        back(recordset);
+                    }).catch((err) => {
+                        console.log(err);
+                        back(null);
+                    });
+            });
+        });
     }
 };
