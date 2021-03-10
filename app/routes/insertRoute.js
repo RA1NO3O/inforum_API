@@ -32,7 +32,7 @@ server.post('/api/newPost/', async (req, res) => {
 
 //新建回复
 server.post('/api/newComment/', async (req, res) => {
-    let r = await sqlQuery.newComment(req);
+    let r = await sqlInsert.newComment(req);
     if (r != null) {
         myDate = new Date();
         console.log('A new comment has been created at ' + myDate.toLocaleTimeString());

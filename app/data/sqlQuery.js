@@ -72,10 +72,10 @@ module.exports = {
                              [nickname],[tags],[avatarURL],[likeCount],[dislikeCount],
                              [editorID],[commentCount],[collectCount]
                              ,IIF([editorID]=@userID,1,0) AS isEditor
-                             ,IIF([user_ID]=@userID,[user_ID],NULL)AS userID
-                             ,IIF([user_ID]=@userID,[isCollected],NULL)AS isCollected
-                             ,IIF([user_ID]=@userID,[like_State],NULL)AS like_State
-                             ,IIF([user_ID]=@userID,[collectTime],NULL)AS collectTime
+                             ,IIF([user_ID]=@userID,[user_ID],null)AS userID
+                             ,IIF([user_ID]=@userID,[isCollected],null)AS isCollected
+                             ,IIF([user_ID]=@userID,[like_State],null)AS like_State
+                             ,IIF([user_ID]=@userID,[collectTime],null)AS collectTime
                              INTO #TEMP FROM [Inforum_Data_Center].[dbo].[getPosts]
                          SELECT DISTINCT * FROM #TEMP 
                          WHERE [userID]=@userID OR [userID] IS NULL
@@ -119,7 +119,7 @@ module.exports = {
                          ,IIF([user_ID]=@userID,[user_ID],null)AS user_ID
                          ,IIF([editorID]=@userID,1,0) AS isEditor
                          FROM [Inforum_Data_Center].[dbo].[getPostComment]
-                         WHERE  [target_comment_postID] = @postID AND (user_ID=@userID OR user_ID IS NULL)
+                         WHERE  [target_comment_postID] = @postID
                          ORDER BY lastEditTime DESC`
                     ).then((recordset) => {
                         back(recordset);
