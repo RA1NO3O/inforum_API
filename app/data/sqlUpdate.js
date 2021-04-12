@@ -37,11 +37,11 @@ module.exports = {
                     .input('birthday', sql.Date, req.body.birthday == 'null' ? null : req.body.birthday)
                     .query(
                         `IF NOT EXISTS (SELECT * FROM tbInfo_user WHERE id = @userID)
-                            INSERT INTO tbInfo_user(avatarURL,bannerURL, bio, location, birthday)
-                            VALUES(@avatarURL,@bannerURL,@bio,@location,@birthday)
+                            INSERT INTO tbInfo_user(avatarURL,bannerURL, nickName, bio, location, birthday)
+                            VALUES(@avatarURL, @bannerURL, @nickName, @bio, @location, @birthday)
                          ELSE
                             UPDATE tbInfo_user
-                            SET avatarURL=@avatarURL, bannerURL=@bannerURL, bio=@bio,
+                            SET avatarURL=@avatarURL, bannerURL=@bannerURL, @nickName=@nickName, bio=@bio,
                             location=@location, birthday=@birthday
                             WHERE id = @userID;`)
                     .then((recordset) => {
