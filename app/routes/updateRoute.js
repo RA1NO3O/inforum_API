@@ -12,6 +12,7 @@ server.post('/api/editPost/', async (req, res) => {
     res.send(r != null ? 'success.' : 'error.');
 });
 
+//编辑个人资料
 server.post('/api/editProfile/', async (req, res) => {
     myDate = new Date();
     let r = await sqlUpdate.editProfile(req);
@@ -37,6 +38,8 @@ server.post('/api/starPost/', async (req, res) => {
     console.dir(r);
     res.send(r != null ? 'success.' : 'error.');
 });
+
+//修改用户名
 server.post('/api/editUserName/', async (req, res) => {
     myDate = new Date();
     let r = await sqlUpdate.editUserName(req);
