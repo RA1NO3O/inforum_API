@@ -136,8 +136,14 @@ module.exports = {
                 await new sql.Request()
                     .input('userID', sql.Int, req.params.id)
                     .query(
-                        `SELECT * FROM [Inforum_Data_Center].[dbo].[getProfile]
-                         WHERE (getProfile.id = @userID)`
+                        `IF NOT EXISTS (SELECT * FROM tbInfo_user WHERE id = @userID)
+                         AND EXISTS (SELECT username FROM tbLogin_userToken WHERE id=@userID)
+                            SELECT username AS "nickname", username, NULL AS "birthday", NULL AS "bio", NULL AS "location", NULL AS "avatarURL", 
+                            NULL AS "bannerURL", 0 AS "follower_count", 0 AS "following_count", NULL AS "joinDate" 
+                            FROM tbLogin_userToken WHERE id=@userID
+                         ELSE
+                            SELECT * FROM [Inforum_Data_Center].[dbo].[getProfile]
+                            WHERE (getProfile.id = @userID);`
                     ).then((recordset) => {
                         back(recordset);
                     }).catch((err) => {
