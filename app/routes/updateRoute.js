@@ -1,7 +1,6 @@
 const express = require("express");
 var server = express.Router();
 var sqlUpdate = require('../data/sqlUpdate');
-const sql = require('mssql');
 var myDate;
 
 //编辑帖子

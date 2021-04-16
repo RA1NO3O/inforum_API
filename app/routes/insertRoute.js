@@ -1,7 +1,6 @@
 const express = require("express");
 var server = express.Router();
 var sqlInsert = require('../data/sqlInsert');
-const sql = require('mssql');
 var myDate;
 
 //注册

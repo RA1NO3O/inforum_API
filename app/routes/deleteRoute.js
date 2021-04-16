@@ -1,7 +1,6 @@
 const express = require("express");
 var server = express.Router();
 var sqlDelete = require('../data/sqlDelete');
-const sql = require('mssql');
 var myDate;
 //删除帖子
 server.delete('/api/deletePost/', async (req, res) => {
