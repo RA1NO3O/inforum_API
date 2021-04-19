@@ -1,12 +1,14 @@
 const express = require("express");
 var server = express.Router();
 var sqlQuery = require('../data/sqlQuery');
+
 //查找用户
 server.get('/api/searchUser/', async (req, res) => {
     let r = await sqlQuery.userSearch(req);
     console.dir(r);
     res.json(r);
 });
+
 //登录
 server.get('/api/login/', async (req, res) => {
     let r = await sqlQuery.login(req);

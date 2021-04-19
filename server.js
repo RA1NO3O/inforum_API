@@ -1,5 +1,6 @@
 //server.js
 const express = require('express');
+var RateLimit = require('express-rate-limit');
 const router = express();
 const bodyParser = require('body-parser');
 const port = 7246;
@@ -16,6 +17,14 @@ router.listen(port, () => {
   console.log('app listening on http://localhost:' + port);
 });
 
+//防止DDOS攻击
+var limiter = new RateLimit({
+  //限速率为1分钟内5条
+  windowMs:1*60*1000,
+  max: 5
+});
+
+router.use(limiter);
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
 router.all('*', function (req, res, next) {
