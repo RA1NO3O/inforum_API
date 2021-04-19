@@ -45,4 +45,12 @@ server.post('/api/editUserName/', async (req, res) => {
     console.log('User ' + req.body.userID + ' userName has been updated to ' + req.body.userName + ' at ' + myDate.toLocaleTimeString());
     res.send(r != null ? 'success.' : 'error.');
 });
+
+//修改密码
+server.post('/api/editUserPassword/', async (req, res) => {
+    myDate = new Date();
+    let r = await sqlUpdate.editUserPassword(req);
+    console.log('User ' + req.body.userID + ' password has been updated at ' + myDate.toLocaleTimeString());
+    res.send(r != null ? 'success.' : 'error.');
+});
 module.exports = server;
