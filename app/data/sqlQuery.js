@@ -95,7 +95,7 @@ module.exports = {
                 await new sql.Request()
                     .input('postID', sql.Int, req.params.id) //SQL注入
                     .query(
-                        `SELECT * FROM [Inforum_Data_Center].[dbo].[getPostDetail]\
+                        `SELECT * FROM [Inforum_Data_Center].[dbo].[getPostDetail]
                          WHERE postID = @postID`
                     ).then((recordset) => {
                         back(recordset);

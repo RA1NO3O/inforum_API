@@ -12,7 +12,12 @@ module.exports = {
                     .input('phone', sql.VarChar, req.body.phone == 'null' ? null : req.body.phone)
                     .query(
                         `INSERT INTO dbo.tbLogin_userToken(username,password,email,phone)
-                            VALUES (@username, @password, @email, @phone);`)
+                            VALUES (@username, @password, @email, @phone);
+                         INSERT INTO dbo.tbInfo_user(id,nickname) 
+                         VALUES (
+                             (SELECT id FROM dbo.tbLogin_userToken WHERE username=@username),@username
+                         )`
+                    )
                     .then((recordset) => {
                         back(recordset);
                     }).catch((err) => {
