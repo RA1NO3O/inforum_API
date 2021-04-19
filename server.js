@@ -21,7 +21,7 @@ router.listen(port, () => {
 var limiter = new RateLimit({
   //限速率为1分钟内5条
   windowMs:1*60*1000,
-  max: 5
+  max: 45
 });
 
 router.use(limiter);
