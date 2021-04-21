@@ -8,7 +8,7 @@ const queryRoute = require('./app/routes/queryRoute');
 const insertRoute = require('./app/routes/insertRoute');
 const updateRoute = require('./app/routes/updateRoute');
 const deleteRoute = require('./app/routes/deleteRoute');
-var logger = require('./logger');
+var logger = require('./app/logger');
 
 var startDate = new Date(); //启动时间
 

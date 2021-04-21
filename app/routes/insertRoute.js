@@ -1,7 +1,7 @@
 const express = require("express");
 var server = express.Router();
 var sqlInsert = require('../data/sqlInsert');
-const logger = require("./logger");
+const logger = require("../logger");
 var nowDate;
 
 //注册

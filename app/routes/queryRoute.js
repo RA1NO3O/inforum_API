@@ -1,7 +1,7 @@
 const express = require("express");
 var server = express.Router();
 var sqlQuery = require('../data/sqlQuery');
-const logger = require("./logger");
+const logger = require("../logger");
 
 //查找用户
 server.get('/api/searchUser/', async (req, res) => {

@@ -1,7 +1,7 @@
 const express = require("express");
 var server = express.Router();
 var sqlUpdate = require('../data/sqlUpdate');
-var logger = require('./logger');
+var logger = require('../logger');
 var nowDate;
 
 //编辑帖子
