@@ -14,7 +14,7 @@ server.get('/api/searchUser/', async (req, res) => {
 server.get('/api/login/', async (req, res) => {
     let r = await sqlQuery.login(req);
     console.dir(r);
-    logger.log(`user ${req.query.id} trying login.`);
+    logger.log(`user ${req.query.username} trying login.`);
     res.json(r);
 });
 
