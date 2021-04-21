@@ -21,7 +21,7 @@ router.listen(port, () => {
 
 //防止DDOS攻击
 var limiter = new RateLimit({
-  //限速率为1分钟内5条
+  //限速率为1分钟内45条
   windowMs: 1 * 60 * 1000,
   max: 45,
 });
@@ -55,16 +55,21 @@ router.get('/test/', function (req, res) {
   res.send('test passed.');
 });
 router.get('/log/', function (req, res) {
-  fs.readFile('log.txt', 'utf-8', function (err, data) {
-    if (data == '') {
-      res.send('empty.');
-    } else {
-      string = data.replace(/\r\n/g, "<br>");
-      string = string.replace(/\n/g, "<br>");
-      res.send(string);
-    }
-    if (err) throw err;
-  });
+  if(req.query.pwd=='****'){
+    fs.readFile('log.txt', 'utf-8', function (err, data) {
+      if (err) {
+        throw err;
+      } else {
+        if (data == '') {
+          res.send('empty.');
+        } else {
+          string = data.replace(/\r\n/g, "<br>");
+          string = string.replace(/\n/g, "<br>");
+          res.send(string);
+        }
+      }
+    });
+  }
 });
 router.use(queryRoute);
 router.use(insertRoute);
