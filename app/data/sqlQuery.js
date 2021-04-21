@@ -1,5 +1,5 @@
 const sql = require('mssql');
-const config = require('../../config/db');  //请配置好对应的变量.
+const config = require('../../config/db');
 
 module.exports = {
     userSearch: function (req) {

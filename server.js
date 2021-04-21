@@ -8,20 +8,21 @@ const queryRoute = require('./app/routes/queryRoute');
 const insertRoute = require('./app/routes/insertRoute');
 const updateRoute = require('./app/routes/updateRoute');
 const deleteRoute = require('./app/routes/deleteRoute');
-
+var logger = require('./logger');
 
 var startDate = new Date(); //启动时间
 
 router.listen(port, () => {
   console.clear();
+  logger.log('Server started.');
   console.log('app listening on http://localhost:' + port);
 });
 
 //防止DDOS攻击
 var limiter = new RateLimit({
   //限速率为1分钟内5条
-  windowMs:1*60*1000,
-  max: 45
+  windowMs: 1 * 60 * 1000,
+  max: 45,
 });
 
 router.use(limiter);
@@ -41,7 +42,7 @@ router.all('*', function (req, res, next) {
 //基础响应
 router.get('/', function (req, res) {
   var myDate = new Date();
-  res.send('Inforum Web API V1.0<br/>' + myDate.toLocaleTimeString() + '<br/>Service started at ' + startDate.toLocaleTimeString());
+  res.send('Inforum Web API V1.0<br/>' + myDate.toLocaleString() + '<br/>Service started at ' + startDate.toLocaleString());
 });
 router.get('/whoRyou/', function (req, res) {
   res.send('Inforum Web API V1.0<br/> Developed by RA1N at <a href="http://github.com/RA1NO3O">Github/RA1NO3O</a>');
@@ -51,6 +52,18 @@ router.get('/hello/', function (req, res) {
 });
 router.get('/test/', function (req, res) {
   res.send('test passed.');
+});
+router.get('/log/', function (req, res) {
+  fs.readFile('log.txt', 'utf-8', function (err, data) {
+    if (err) throw err;
+    if (data == '') {
+      res.send('empty.');
+    } else {
+      string = data.replace(/\r\n/g, "<br>");
+      string = string.replace(/\n/g, "<br>");
+      res.send(string);
+    }
+  });
 });
 router.use(queryRoute);
 router.use(insertRoute);

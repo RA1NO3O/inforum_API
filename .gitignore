@@ -104,3 +104,4 @@ dist
 .tern-port
 config/db.js
 config/oss.js
+log.txt
