@@ -56,7 +56,6 @@ router.get('/test/', function (req, res) {
 });
 router.get('/log/', function (req, res) {
   fs.readFile('log.txt', 'utf-8', function (err, data) {
-    if (err) throw err;
     if (data == '') {
       res.send('empty.');
     } else {
@@ -64,6 +63,7 @@ router.get('/log/', function (req, res) {
       string = string.replace(/\n/g, "<br>");
       res.send(string);
     }
+    if (err) throw err;
   });
 });
 router.use(queryRoute);
