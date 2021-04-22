@@ -6,7 +6,7 @@ module.exports = {
         return new Promise(async (back) => {
             await sql.connect(config).then(async () => {
                 await new sql.Request()
-                    .input('userID', sql.VarChar, req.query.userID)
+                    .input('userID', sql.Int, req.query.userID)
                     .query(
                         `SELECT username from dbo.tbLogin_userToken WHERE id = @userID`
                     ).then((recordset) => {
