@@ -2,6 +2,22 @@ const sql = require('mssql');
 const config = require('../../config/db');
 
 module.exports = {
+    getUserNameByID:function(req){
+        return new Promise(async (back) => {
+            await sql.connect(config).then(async () => {
+                await new sql.Request()
+                    .input('userID', sql.VarChar, req.query.userID)
+                    .query(
+                        `SELECT username from dbo.tbLogin_userToken WHERE id = @userID`
+                    ).then((recordset) => {
+                        back(recordset);
+                    }).catch((err) => {
+                        console.log(err);
+                        back(null);
+                    });
+            });
+        });
+    },
     userSearch: function (req) {
         return new Promise(async (back) => {
             await sql.connect(config).then(async () => {
@@ -18,7 +34,8 @@ module.exports = {
                     });
             });
         });
-    }, login: function (req) {
+    }, 
+    login: function (req) {
         return new Promise(async (back) => {
             await sql.connect(config).then(async () => {
                 await new sql.Request()

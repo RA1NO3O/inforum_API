@@ -90,4 +90,10 @@ server.get('/api/fuzzySearch/', async (req, res) => {
     });
 });
 
+server.get('/api/getUserNameByID/', async (req, res) => {
+    let r = await sqlQuery.getUserNameByID(req);
+    console.dir(r);
+    res.json(r);
+});
+
 module.exports = server;
