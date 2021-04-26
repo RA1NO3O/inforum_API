@@ -2,7 +2,7 @@ const sql = require('mssql');
 const config = require('../../config/db');
 
 module.exports = {
-    getUserNameByID:function(req){
+    getUserNameByID: function (req) {
         return new Promise(async (back) => {
             await sql.connect(config).then(async () => {
                 await new sql.Request()
@@ -34,7 +34,7 @@ module.exports = {
                     });
             });
         });
-    }, 
+    },
     login: function (req) {
         return new Promise(async (back) => {
             await sql.connect(config).then(async () => {
@@ -175,7 +175,7 @@ module.exports = {
             await sql.connect(config).then(async () => {
                 await new sql.Request()
                     .input('userID', sql.Int, req.params.id)
-                    .input('currentUserID',sql.Int,req.query.currentUserID)
+                    .input('currentUserID', sql.Int, req.query.currentUserID)
                     .query(`SELECT DISTINCT [postID],[title],[body_S]
                             ,[imageURL],[lastEditTime],[nickname],[tags],[avatarURL]
                             ,[likeCount],[dislikeCount],[commentCount],[collectCount]
@@ -201,7 +201,7 @@ module.exports = {
             await sql.connect(config).then(async () => {
                 await new sql.Request()
                     .input('userID', sql.Int, req.params.id)
-                    .input('currentUserID',sql.Int,req.query.currentUserID)
+                    .input('currentUserID', sql.Int, req.query.currentUserID)
                     .query(`SELECT DISTINCT [postID],[title],[body_S]
                             ,[imageURL],[lastEditTime],[nickname],[tags],[avatarURL]
                             ,[likeCount],[dislikeCount],[commentCount],[collectCount]
@@ -227,7 +227,7 @@ module.exports = {
             await sql.connect(config).then(async () => {
                 await new sql.Request()
                     .input('userID', sql.Int, req.params.id)
-                    .input('currentUserID',sql.Int,req.query.currentUserID)
+                    .input('currentUserID', sql.Int, req.query.currentUserID)
                     .query(`SELECT DISTINCT [postID],[title],[body_S]
                             ,[imageURL],[lastEditTime],[nickname],[tags],[avatarURL]
                             ,[likeCount],[dislikeCount],[commentCount],[collectCount]
@@ -273,8 +273,25 @@ module.exports = {
                 await new sql.Request()
                     .input('query', sql.NVarChar, req.query.query)
                     .query(`SELECT * FROM getProfile 
-                                WHERE nickname LIKE '%'+@query+'%'
-                                OR username LIKE '%'+@query+'%'`
+                            WHERE nickname LIKE '%'+@query+'%'
+                            OR username LIKE '%'+@query+'%'`
+                    ).then((recordset) => {
+                        back(recordset);
+                    }).catch((err) => {
+                        console.log(err);
+                        back(null);
+                    });
+            });
+        });
+    },
+    getUserAccountSettings: function (req) {
+        return new Promise(async function (back) {
+            await sql.connect(config).then(async () => {
+                await new sql.Request()
+                    .input('userID', sql.Int, req.query.userID)
+                    .query(`SELECT username, email, phone 
+                            FROM tbLogin_userToken 
+                            WHERE id = @userID`
                     ).then((recordset) => {
                         back(recordset);
                     }).catch((err) => {
