@@ -9,8 +9,8 @@ server.post('/api/editPost/', async (req, res) => {
     nowDate = new Date();
     let r = await sqlUpdate.editPost(req);
     var msg = 'Post ' + req.body.postID + ' has been updated.';
-    console.log(msg+` at ${nowDate.toLocaleString()}.`);
-    logger.log(msg);
+    console.log(msg + ` at ${nowDate.toLocaleString()}.`);
+    logger.writeLog(msg);
     res.send(r != null ? 'success.' : 'error.');
 });
 
@@ -19,8 +19,8 @@ server.post('/api/editProfile/', async (req, res) => {
     nowDate = new Date();
     let r = await sqlUpdate.editProfile(req);
     var msg = 'User profile ' + req.query.userID + ' has been updateed.';
-    console.log(msg+` at ${nowDate.toLocaleString()}.`);
-    logger.log(msg);
+    console.log(msg + ` at ${nowDate.toLocaleString()}.`);
+    logger.writeLog(msg);
     res.send(r != null ? 'success.' : 'error.');
 });
 
@@ -43,23 +43,44 @@ server.post('/api/starPost/', async (req, res) => {
     res.send(r != null ? 'success.' : 'error.');
 });
 
-//修改用户名
-server.post('/api/editUserName/', async (req, res) => {
+//更新用户名
+server.post('/api/updateUserName/', async (req, res) => {
     nowDate = new Date();
-    let r = await sqlUpdate.editUserName(req);
-    var msg = `User ${req.body.userID} userName has been updated to ${req.body.userName}.`;    
-    console.log(msg+` at ${nowDate.toLocaleString()}.`);
-    logger.log(msg);
+    let r = await sqlUpdate.updateUserName(req);
+    var msg = `User ${req.body.userID} userName has been updated to ${req.body.userName}.`;
+    console.log(msg + ` at ${nowDate.toLocaleString()}.`);
+    logger.writeLog(msg);
     res.send(r != null ? 'success.' : 'error.');
 });
 
-//修改密码
-server.post('/api/editUserPassword/', async (req, res) => {
+//更新密码
+server.post('/api/updateUserPassword/', async (req, res) => {
     nowDate = new Date();
-    let r = await sqlUpdate.editUserPassword(req);
+    let r = await sqlUpdate.updateUserPassword(req);
     var msg = 'User ' + req.body.userID + ' password has been updated.';
-    console.log(msg+` at ${nowDate.toLocaleString()}`);
-    logger.log(msg);
+    console.log(msg + ` at ${nowDate.toLocaleString()}`);
+    logger.writeLog(msg);
     res.send(r != null ? 'success.' : 'error.');
 });
+
+//更新电话号码
+server.post('/api/updateUserPhoneNumber/', async (req, res) => {
+    nowDate = new Date();
+    let r = await sqlUpdate.updateUserPhoneNumber(req);
+    var msg = 'User ' + req.body.userID + ' phoneNumber has been updated.';
+    console.log(msg + ` at ${nowDate.toLocaleString()}`);
+    logger.writeLog(msg);
+    res.send(r != null ? 'success.' : 'error.');
+});
+
+//更新邮箱地址
+server.post('/api/updateUserEmailAddress/', async (req, res) => {
+    nowDate = new Date();
+    let r = await sqlUpdate.updateUserEmailAddress(req);
+    var msg = 'User ' + req.body.userID + ' email has been updated.';
+    console.log(msg + ` at ${nowDate.toLocaleString()}`);
+    logger.writeLog(msg);
+    res.send(r != null ? 'success.' : 'error.');
+});
+
 module.exports = server;

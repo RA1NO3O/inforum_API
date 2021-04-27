@@ -14,7 +14,7 @@ server.get('/api/searchUser/', async (req, res) => {
 server.get('/api/login/', async (req, res) => {
     let r = await sqlQuery.login(req);
     console.dir(r);
-    logger.log(`user ${req.query.username} trying login.`);
+    logger.writeLog(`user ${req.query.username} trying login.`);
     res.json(r);
 });
 
@@ -22,7 +22,7 @@ server.get('/api/login/', async (req, res) => {
 server.get('/api/getCollection/:id', async (req, res) => {
     let r = await sqlQuery.getCollection(req);
     console.dir(r);
-    logger.log(`user ${req.params.id} browsing collection.`);
+    logger.writeLog(`user ${req.params.id} browsing collection.`);
     res.json(r);
 });
 
@@ -30,7 +30,7 @@ server.get('/api/getCollection/:id', async (req, res) => {
 server.get('/api/getPosts/:id', async (req, res) => {
     let r = await sqlQuery.getPosts(req);
     console.dir(r);
-    logger.log(`user ${req.params.id} get online.`);
+    logger.writeLog(`user ${req.params.id} get online.`);
     res.json(r);
 });
 
@@ -44,7 +44,7 @@ server.get('/api/getPostDetail/:id', async (req, res) => {
 //请求传入id => 获取帖子回复
 server.get('/api/getComment/:id', async (req, res) => {
     let r = await sqlQuery.getPostComment(req);
-    logger.log(`user ${req.query.userID} browsing post#${req.params.id}.`);
+    logger.writeLog(`user ${req.query.userID} browsing post#${req.params.id}.`);
     console.dir(r);
     res.json(r);
 });

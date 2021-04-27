@@ -2,7 +2,7 @@ const fs = require('fs');
 var nowDate;
 
 module.exports = {
-    log: function (str) {
+    writeLog: function (str) {
         nowDate = new Date();
         fs.appendFileSync('log.txt',`[${nowDate.toLocaleString()}] ${str}\n`);
     },

@@ -133,14 +133,15 @@ module.exports = {
             });
         });
     },
-    editUserName: function (req) {
+    updateUserName: function (req) {
         return new Promise(async (back) => {
             await sql.connect(config).then(async () => {
                 await new sql.Request()
                     .input('userID', sql.Int, req.body.userID)
                     .input('userName', sql.VarChar, req.body.userName)
                     .query(
-                        `UPDATE tbLogin_userToken SET username=@userName WHERE id=@userID;`)
+                        `UPDATE tbLogin_userToken SET username=@userName 
+                         WHERE id=@userID;`)
                     .then((recordset) => {
                         back(recordset);
                     }).catch((err) => {
@@ -150,14 +151,51 @@ module.exports = {
             });
         });
     },
-    editUserPassword: function (req) {
+    updateUserPassword: function (req) {
         return new Promise(async (back) => {
             await sql.connect(config).then(async () => {
                 await new sql.Request()
                     .input('userID', sql.Int, req.body.userID)
                     .input('password', sql.VarChar, req.body.password)
                     .query(
-                        `UPDATE tbLogin_userToken SET password=@password WHERE id=@userID;`)
+                        `UPDATE tbLogin_userToken SET password=@password
+                         WHERE id=@userID;`)
+                    .then((recordset) => {
+                        back(recordset);
+                    }).catch((err) => {
+                        console.log(err);
+                        back(null);
+                    });
+            });
+        });
+    },
+    updateUserPhoneNumber: function (req) {
+        return new Promise(async (back) => {
+            await sql.connect(config).then(async () => {
+                await new sql.Request()
+                    .input('userID', sql.Int, req.body.userID)
+                    .input('phoneNumber'.sql.VarChar, req.body.phoneNumber)
+                    .query(
+                        `UPDATE tbLogin_userToken SET phone=@phoneNumber 
+                         WHERE id=@userID`)
+                    .then((recordset) => {
+                        back(recordset);
+                    }).catch((err) => {
+                        console.log(err);
+                        back(null);
+                    });
+            });
+        });
+    },
+    updateUserEmailAddress: function (req) {
+        return new Promise(async (back) => {
+            await sql.connect(config).then(async () => {
+                await new sql.Request()
+                    .input('userID', sql.Int, req.body.userID)
+                    .input('emailAddress'.sql.VarChar, req.body.emailAddress)
+                    .query(
+                        `UPDATE tbLogin_userToken SET email=@emailAddress 
+                         WHERE id=@userID`)
                     .then((recordset) => {
                         back(recordset);
                     }).catch((err) => {
