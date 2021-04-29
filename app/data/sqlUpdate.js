@@ -174,7 +174,7 @@ module.exports = {
             await sql.connect(config).then(async () => {
                 await new sql.Request()
                     .input('userID', sql.Int, req.body.userID)
-                    .input('phoneNumber'.sql.VarChar, req.body.phoneNumber)
+                    .input('phoneNumber',sql.VarChar, req.body.phoneNumber)
                     .query(
                         `UPDATE tbLogin_userToken SET phone=@phoneNumber 
                          WHERE id=@userID`)
@@ -192,7 +192,7 @@ module.exports = {
             await sql.connect(config).then(async () => {
                 await new sql.Request()
                     .input('userID', sql.Int, req.body.userID)
-                    .input('emailAddress'.sql.VarChar, req.body.emailAddress)
+                    .input('emailAddress',sql.VarChar, req.body.emailAddress)
                     .query(
                         `UPDATE tbLogin_userToken SET email=@emailAddress 
                          WHERE id=@userID`)
