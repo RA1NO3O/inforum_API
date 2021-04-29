@@ -23,7 +23,7 @@ server.delete('/api/deleteUser/', async (req, res) => {
         nowDate = new Date();
         var msg = 'User ' + req.body.userID + ' has been deleted.';
         console.log(msg+`at ${nowDate.toLocaleString()}`);
-        logger.log(msg);
+        logger.writeLog(msg);
         res.send('success.');
     } else {
         res.status(400).send('error.');

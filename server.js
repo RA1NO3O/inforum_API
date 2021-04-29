@@ -15,7 +15,7 @@ var startDate = new Date(); //启动时间
 
 router.listen(port, () => {
   console.clear();
-  logger.log('Server started.');
+  logger.writeLog('Server started.');
   console.log('app listening on http://localhost:' + port);
 });
 
