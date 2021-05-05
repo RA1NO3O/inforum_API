@@ -15,5 +15,5 @@ module.exports = {
     }
 };
 ```
-> You know what to do next.
-- execute `npm run dev` or `pm2 start .\server.js --watch -i max` then you're good to go.
+> Compare your API server address to your project.
+- execute `npm run dev` or `pm2 start .\server.js --watch -i max` to launch.
