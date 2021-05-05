@@ -2,7 +2,6 @@
 const express = require('express');
 var RateLimit = require('express-rate-limit');
 const router = express();
-const bodyParser = require('body-parser');
 const port = 7246;
 const queryRoute = require('./app/routes/queryRoute');
 const insertRoute = require('./app/routes/insertRoute');
@@ -27,8 +26,8 @@ var limiter = new RateLimit({
 });
 
 router.use(limiter);
-router.use(bodyParser.json());
-router.use(bodyParser.urlencoded({ extended: false }));
+router.use(express.json());
+router.use(express.urlencoded({ extended: false }));
 router.all('*', function (req, res, next) {
   // console.log(req.headers.origin);
   // console.log(req.environ);
