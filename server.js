@@ -54,11 +54,9 @@ router.get('/test/', function (req, res) {
   res.send('test passed.');
 });
 router.get('/log/', function (req, res) {
-  if(req.query.pwd=='****'){
-    fs.readFile('log.txt', 'utf-8', function (err, data) {
-      if (err) {
-        throw err;
-      } else {
+  if (req.query.pwd == '****') {
+    fs.readFile('log.txt', 'utf-8', function (data) {
+      try{
         if (data == '') {
           res.send('empty.');
         } else {
@@ -66,6 +64,9 @@ router.get('/log/', function (req, res) {
           string = string.replace(/\n/g, "<br>");
           res.send(string);
         }
+      }catch(err){
+        res.status(500);
+        res.end();
       }
     });
   }
