@@ -55,19 +55,22 @@ router.get('/test/', function (req, res) {
 });
 router.get('/log/', function (req, res) {
   if (req.query.pwd == '****') {
-    fs.readFile('log.txt', 'utf-8', function (data) {
+    fs.readFile('log.txt', 'utf-8', function (err,data) {
       try{
         if (data == '') {
           res.send('empty.');
         } else {
-          string = data.replace(/\r\n/g, "<br>");
-          string = string.replace(/\n/g, "<br>");
-          res.send(string);
+          var s = data.replace(/\r\n/g, "<br>");
+          s = s.replace(/\n/g, "<br>");
+          res.send(s);
         }
-      }catch(err){
+      }catch{
         res.status(500).send(err);
+        console.log(err);
       }
     });
+  }else{
+    res.status(404).end();
   }
 });
 router.use(queryRoute);
