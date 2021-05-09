@@ -75,6 +75,18 @@ server.get('/api/getLikedPostsByUser/:id', async (req, res) => {
     console.dir(r);
     res.json(r);
 });
+//获取用户的关注列表
+server.get('/api/getFollowingListByUser/:id', async (req, res) => {
+    let r = await sqlQuery.getFollowingListByUser(req);
+    console.dir(r);
+    res.json(r);
+});
+//获取用户关注者列表
+server.get('/api/getFollowerListByUser/:id', async (req, res) => {
+    let r = await sqlQuery.getFollowerListByUser(req);
+    console.dir(r);
+    res.json(r);
+});
 
 //模糊查询
 server.get('/api/fuzzySearch/', async (req, res) => {

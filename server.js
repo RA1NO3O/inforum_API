@@ -65,8 +65,7 @@ router.get('/log/', function (req, res) {
           res.send(string);
         }
       }catch(err){
-        res.status(500);
-        res.end();
+        res.status(500).send(err);
       }
     });
   }

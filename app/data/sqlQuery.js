@@ -250,6 +250,38 @@ module.exports = {
             });
         });
     },
+    getFollowingListByUser: function (req) {
+        return new Promise(async (back) => {
+            await sql.connect(config).then(async () => {
+                await new sql.Request()
+                    .input('userID', sql.Int, req.params.id)
+                    .query(`SELECT nickname, username, bio, avatarURL 
+                    FROM getFollowingList WHERE follower_userID=@userID`
+                    ).then((recordset) => {
+                        back(recordset);
+                    }).catch((err) => {
+                        console.log(err);
+                        back(null);
+                    });
+            });
+        });
+    },
+    getFollowerListByUser: function (req) {
+        return new Promise(async (back) => {
+            await sql.connect(config).then(async () => {
+                await new sql.Request()
+                    .input('userID', sql.Int, req.params.id)
+                    .query(`SELECT nickname, username, bio, avatarURL 
+                    FROM getFollowerList WHERE userID=@userID`
+                    ).then((recordset) => {
+                        back(recordset);
+                    }).catch((err) => {
+                        console.log(err);
+                        back(null);
+                    });
+            });
+        });
+    },
     postFuzzySearch: function (req) {
         return new Promise(async (back) => {
             await sql.connect(config).then(async () => {
