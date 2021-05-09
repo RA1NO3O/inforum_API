@@ -53,7 +53,7 @@ router.get('/hello/', function (req, res) {
 router.get('/test/', function (req, res) {
   res.send('test passed.');
 });
-router.get('/log/', function (req, res) {
+router.get('/api/log/', function (req, res) {
   if (req.query.pwd == '****') {
     fs.readFile('log.txt', 'utf-8', function (err,data) {
       try{
