@@ -255,7 +255,7 @@ module.exports = {
             await sql.connect(config).then(async () => {
                 await new sql.Request()
                     .input('userID', sql.Int, req.params.id)
-                    .query(`SELECT nickname, username, bio, avatarURL 
+                    .query(`SELECT id, nickname, username, bio, avatarURL 
                     FROM getFollowingList WHERE follower_userID=@userID`
                     ).then((recordset) => {
                         back(recordset);
@@ -271,7 +271,7 @@ module.exports = {
             await sql.connect(config).then(async () => {
                 await new sql.Request()
                     .input('userID', sql.Int, req.params.id)
-                    .query(`SELECT nickname, username, bio, avatarURL 
+                    .query(`SELECT id, nickname, username, bio, avatarURL 
                     FROM getFollowerList WHERE userID=@userID`
                     ).then((recordset) => {
                         back(recordset);
