@@ -287,9 +287,11 @@ module.exports = {
             await sql.connect(config).then(async () => {
                 await new sql.Request()
                     .input('query', sql.NVarChar, req.query.query)
-                    .query(`SELECT * FROM getPosts WHERE title LIKE '%'+@query+'%' 
-                            OR body_S LIKE '%'+@query+'%'
-                            OR tags LIKE '%'+@query+'%'`
+                    .query(`SELECT * FROM getPosts 
+                            WHERE title LIKE '%'+@query+'%' 
+                                OR body_S LIKE '%'+@query+'%'
+                                OR tags LIKE '%'+@query+'%'
+                            ORDER BY lastEditTime DESC`
                     ).then((recordset) => {
                         back(recordset);
                     }).catch((err) => {
