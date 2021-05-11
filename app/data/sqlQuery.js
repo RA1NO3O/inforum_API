@@ -272,7 +272,7 @@ module.exports = {
                 await new sql.Request()
                     .input('userID', sql.Int, req.params.id)
                     .query(`SELECT id, nickname, username, bio, avatarURL 
-                    FROM getFollowerList WHERE userID=@userID`
+                    FROM getFollowerList WHERE id=@userID`
                     ).then((recordset) => {
                         back(recordset);
                     }).catch((err) => {
